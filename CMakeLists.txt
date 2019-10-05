@@ -34,6 +34,11 @@ SET( AIBOT_HEADERS
 	Logger.h
 	MyBotLogic.h	
 	TurnData.h
+
+	#Judith
+	PathFinder.h
+	PriorityHeap.h
+	NodeReccord.h
 	
 	#DLL Stuff
 	Interop_API.h	
