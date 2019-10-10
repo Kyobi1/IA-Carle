@@ -3,15 +3,25 @@
 #include <unordered_map>
 #include <vector>
 #include "Connection.h"
+#include "TurnData.h"
+#include "InitData.h"
 
 struct Node {
 	std::vector<Connection> connections;
-	STileInfo nodeInfos;
+	STileInfo* nodeInfos;
 };
 
 class Graph {
-	using key = HexCell;
+	using graphKey = HexCell;
 
-	std::unordered_map<HexCell, Node> map;
+	std::unordered_map<graphKey, Node> map;
 
+public:
+	
+	Graph() = default;
+
+	void init(const SInitData& initData);
+	void update(const STurnData& turnData);
+
+	Node* getNode(const graphKey& key) const;
 };

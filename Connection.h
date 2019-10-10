@@ -1,15 +1,20 @@
-#pragma once
+#ifndef CONNECTION_H
+#define CONNECTION_H
+
 #include "Globals.h"
+#include "HexCell.h"
 
 struct Connection {
-	STileInfo originNode;
-	STileInfo destinationNode;
-
-	static const int cout = 1;
+	HexCell originNode;
+	HexCell destinationNode;
+	EObjectType object;
 
 	Connection() = default;
+	void init(const HexCell& origin, const HexCell& destination);
 
-	Connection(const STileInfo& origin, const STileInfo& destination);
+	Connection(const HexCell& origin, const HexCell& destination);
 
-	float getCost() const;
+	float getCost() const { return 1.0f; }
 };
+
+#endif //CONNECTION_H
