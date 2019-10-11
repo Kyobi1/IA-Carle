@@ -35,6 +35,15 @@ SET( AIBOT_HEADERS
 	MyBotLogic.h	
 	TurnData.h
 
+	#Clément
+	NPC.h
+	NPCMother.h
+
+	#Victor
+	Connection.h
+	Graph.h
+	HexCell.h	
+
 	#Judith
 	PathFinder.h
 	PriorityHeap.h
@@ -52,7 +61,15 @@ SET( AIBOT_SRC
 	AIBot.cpp
 	Logger.cpp
 	MyBotLogic.cpp
+	
+	#Clément
+	NPC.h
+	NPCMother.h
+	
+	#Victor
 
+	#Judith
+	
 	#DLL Stuff
 	dllmain.cpp
 	Interop_API.cpp
