@@ -1,10 +1,10 @@
 #pragma once
-#include "Map.h"
 #include <unordered_map>
 #include <vector>
 #include "Connection.h"
 #include "TurnData.h"
 #include "InitData.h"
+#include <algorithm>
 
 struct Node {
 	std::vector<Connection> connections;

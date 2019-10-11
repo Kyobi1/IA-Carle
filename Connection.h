@@ -10,9 +10,9 @@ struct Connection {
 	EObjectType object;
 
 	Connection() = default;
-	void init(const HexCell& origin, const HexCell& destination);
+	Connection(const HexCell& origin, const HexCell& destination, const EObjectType& object_);
 
-	Connection(const HexCell& origin, const HexCell& destination);
+	void init(const HexCell& origin, const HexCell& destination, const EObjectType& object);
 
 	float getCost() const { return 1.0f; }
 };
