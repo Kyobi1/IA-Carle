@@ -24,6 +24,8 @@ struct HexCell {
 	std::vector<HexCell> getNeighbors() const;
 
 	EHexCellDirection directionTo(HexCell const& other) const;
+	HexCell neighborFromDirection(EHexCellDirection const& direction) const;
+	static EHexCellDirection oppositeDirection(EHexCellDirection const& direction);
 
 private:
 

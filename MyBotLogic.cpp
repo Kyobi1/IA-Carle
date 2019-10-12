@@ -33,10 +33,10 @@ void MyBotLogic::Init(const SInitData& _initData)
 {
 	BOT_LOGIC_LOG(mLogger, "Init", true);
 	
-	graph.init(_initData);
-
 	Logger log;
 	log.Init("../Debug", "debug.txt");
+
+	graph.init(_initData);
 
 	graph.debug(log);
 }

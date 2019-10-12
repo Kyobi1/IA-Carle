@@ -51,3 +51,13 @@ EHexCellDirection HexCell::directionTo(const HexCell& other) const {
 		throw std::exception("Pas une direction");
 	}
 }
+
+HexCell HexCell::neighborFromDirection(EHexCellDirection const& direction) const
+{
+	return *this + neighbors[direction];
+}
+
+EHexCellDirection HexCell::oppositeDirection(EHexCellDirection const& direction)
+{
+	return static_cast<EHexCellDirection>((direction + 3) % 6);
+}

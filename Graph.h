@@ -6,18 +6,31 @@
 #include "InitData.h"
 #include "Logger.h"
 #include <algorithm>
-
+#include <sstream>
 
 
 struct Node {
 	std::vector<Connection> connections;
-	STileInfo* nodeInfos;
+	STileInfo nodeInfos;
+	const static std::string typeNames[3];
+
+	void debug(Logger& logger) const
+	{
+		std::stringstream ss;
+		ss << "q : " << nodeInfos.q << "\tr : " << nodeInfos.r << std::endl;
+		ss << "type : " << typeNames[nodeInfos.type] << std::endl;
+		ss << "Nombre de voisins : " << connections.size() << std::endl;
+		logger.Log(ss.str());
+		std::for_each(begin(connections), end(connections), [&logger](Connection connection) { logger.Log("Connection : "); connection.debug(logger); });
+	}
 };
 
 class Graph {
 	using graphKey = HexCell;
 
 	std::unordered_map<graphKey, Node> map;
+
+	std::vector<STileInfo> removeForbiddenTiles(STileInfo* tileInfoArray, int tileInfoArraySize) const;
 
 public:
 	
