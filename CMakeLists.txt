@@ -67,6 +67,9 @@ SET( AIBOT_SRC
 	NPCMother.h
 	
 	#Victor
+	Connection.cpp
+	Graph.cpp
+	HexCell.cpp
 
 	#Judith
 	

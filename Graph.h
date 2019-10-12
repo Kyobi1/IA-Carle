@@ -4,7 +4,10 @@
 #include "Connection.h"
 #include "TurnData.h"
 #include "InitData.h"
+#include "Logger.h"
 #include <algorithm>
+
+
 
 struct Node {
 	std::vector<Connection> connections;
@@ -24,4 +27,6 @@ public:
 	void update(const STurnData& turnData);
 
 	Node* getNode(const graphKey& key) const;
+
+	void debug(Logger& logger) const;
 };

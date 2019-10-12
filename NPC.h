@@ -1,13 +1,9 @@
 #pragma once
-
-class Cell
-{
-
-};
+#include "HexCell.h"
 
 class NPC
 {
-	using cellType = Cell;
+	using cellType = HexCell;
 	cellType pos;
 	enum stateTypes{ EN_DEPLACEMENT, EN_ATTENTE, ARRIVE, NON_ASSIGNE } etat;
 public:

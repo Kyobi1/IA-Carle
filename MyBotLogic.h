@@ -2,6 +2,8 @@
 
 #include "BotLogicIF.h"
 #include "Logger.h"
+#include "Graph.h"
+#include "NPCMother.h"
 
 #ifdef _DEBUG
 #define BOT_LOGIC_DEBUG
@@ -30,4 +32,7 @@ public:
 
 protected:
 	Logger mLogger;
+
+	Graph graph;
+	NPCMother mother;
 };

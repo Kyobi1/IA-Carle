@@ -1,5 +1,6 @@
 #include "Graph.h"
 
+
 void Graph::init(const SInitData& initData)
 {
 	for (int i = 0; i < initData.tileInfoArraySize; ++i) {
@@ -11,4 +12,14 @@ void Graph::init(const SInitData& initData)
 			}
 		}
 	}
+}
+
+void Graph::update(const STurnData& turnData)
+{
+
+}
+
+void Graph::debug(Logger& logger) const
+{
+	logger.Log("Infos graphe");
 }

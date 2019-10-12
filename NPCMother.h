@@ -1,18 +1,14 @@
 #pragma once
 #include "NPC.h"
+#include "Graph.h"
 #include <vector>
-
-class MAP
-{
-
-};
 
 class NPCMother
 {
-	using cellType = Cell;
+	using cellType = HexCell;
 	std::vector<NPC> enfants;
-	MAP* map;
+	Graph* map;
 public:
-	NPCMother();
-	NPCMother(std::vector<cellType> NPCs, MAP* map_);
+	NPCMother() = default;
+	NPCMother(const std::vector<NPC>& NPCs, Graph* map_);
 };
