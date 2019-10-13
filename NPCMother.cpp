@@ -2,12 +2,7 @@
 #include <algorithm>
 #include <iterator>
 
-NPCMother::NPCMother() : map(nullptr)
+NPCMother::NPCMother(const std::vector<NPC>& NPCs, Graph* map_) : map(map_), enfants(NPCs)
 {
-
-}
-
-NPCMother::NPCMother(std::vector<cellType> NPCs, MAP* map_) : map(map_)
-{
-	std::for_each(begin(NPCs), end(NPCs), [this](cellType cell) {enfants.emplace_back(cell); });
+	
 }

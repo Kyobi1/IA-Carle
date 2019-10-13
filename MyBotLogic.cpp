@@ -5,6 +5,9 @@
 #include "InitData.h"
 #include "TurnData.h"
 
+#include <iostream>
+#include <fstream>
+
 MyBotLogic::MyBotLogic()
 {
 	//Write Code Here
@@ -23,7 +26,6 @@ void MyBotLogic::Configure(const SConfigData& _configData)
 
 	BOT_LOGIC_LOG(mLogger, "Configure", true);
 
-
 	//Write Code Here
 }
 
@@ -31,12 +33,17 @@ void MyBotLogic::Init(const SInitData& _initData)
 {
 	BOT_LOGIC_LOG(mLogger, "Init", true);
 	
-	//Write Code Here
+	Logger log;
+	log.Init("../Debug", "debug.txt");
+
+	graph.init(_initData);
+
+	graph.debug(log);
 }
 
 void MyBotLogic::GetTurnOrders(const STurnData& _turnData, std::list<SOrder>& _orders)
 {
 	BOT_LOGIC_LOG(mLogger, "GetTurnOrders", true);
 
-	//Write Code Here
+	graph.update(_turnData);
 }
