@@ -8,16 +8,19 @@
 #include <utility>
 
 class PathFinder {
-	using CellKey = int;
+protected:
+	using CellKey = HexCell;
 	using PathfindingList = PriorityHeap<NodeReccord>;
+	using path = std::vector<HexCell>;
 
 	PathfindingList openSet;
-	PathfindingList closeSet;
+	//PathfindingList closeSet;
 
-	//void compute();
+	virtual path compute(const HexCell& start) = 0;
 public:
 	class NoPathFound {};
 	PathFinder() = default;
+
 	//std::vector<CellKey> getPath();
 
 };
