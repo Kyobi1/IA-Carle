@@ -26,8 +26,9 @@ struct Node {
 };
 
 class Graph {
+public:
 	using graphKey = HexCell;
-
+private:
 	std::unordered_map<graphKey, Node> map;
 
 	std::vector<STileInfo> removeForbiddenTiles(STileInfo* tileInfoArray, int tileInfoArraySize) const;
@@ -40,6 +41,7 @@ public:
 	void update(const STurnData& turnData);
 
 	Node* getNode(const graphKey& key) const;
+	const std::unordered_map<graphKey, Node>& getNodes() const;
 
 	void debug(Logger& logger) const;
 };

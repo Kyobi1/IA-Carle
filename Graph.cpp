@@ -44,6 +44,11 @@ std::vector<STileInfo> Graph::removeForbiddenTiles(STileInfo* tileInfoArray, int
 	return tiles;
 }
 
+const std::unordered_map<Graph::graphKey, Node>& Graph::getNodes() const
+{
+	return map;
+}
+
 void Graph::debug(Logger& logger) const
 {
 	logger.Log("Infos graphe : ");
