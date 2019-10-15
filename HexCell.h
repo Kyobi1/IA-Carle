@@ -6,6 +6,7 @@
 
 enum EHexCellDirection;
 struct STileInfo;
+class Logger;
 
 struct HexCell {
 	int q;
@@ -26,6 +27,8 @@ struct HexCell {
 	EHexCellDirection directionTo(HexCell const& other) const;
 	HexCell neighborFromDirection(EHexCellDirection const& direction) const;
 	static EHexCellDirection oppositeDirection(EHexCellDirection const& direction);
+
+	void debug(Logger& log) const;
 
 private:
 

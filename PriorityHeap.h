@@ -1,6 +1,7 @@
 #ifndef PRIORITY_HEAP_H
 #define PRIORITY_HEAP_H
-
+#include <vector>
+#include <algorithm>
 
 template<class T1>
 class PriorityHeap {

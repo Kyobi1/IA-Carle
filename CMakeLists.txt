@@ -38,6 +38,7 @@ SET( AIBOT_HEADERS
 	#Clément
 	NPC.h
 	NPCMother.h
+	PathFinderAStar.h
 
 	#Victor
 	Connection.h
@@ -48,6 +49,7 @@ SET( AIBOT_HEADERS
 	PathFinder.h
 	PriorityHeap.h
 	NodeReccord.h
+	Debug.h
 	
 	#DLL Stuff
 	Interop_API.h	
@@ -63,8 +65,9 @@ SET( AIBOT_SRC
 	MyBotLogic.cpp
 	
 	#Clément
-	NPC.h
-	NPCMother.h
+	NPC.cpp
+	NPCMother.cpp
+	PathFinderAStar.cpp
 	
 	#Victor
 	Connection.cpp
@@ -72,7 +75,9 @@ SET( AIBOT_SRC
 	HexCell.cpp
 
 	#Judith
-	
+	PathFinder.cpp
+	Debug.cpp
+
 	#DLL Stuff
 	dllmain.cpp
 	Interop_API.cpp

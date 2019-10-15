@@ -1,5 +1,8 @@
 #include "HexCell.h"
 #include "Globals.h"
+#include "Logger.h"
+#include <string>
+#include <sstream>
 
 const std::vector<HexCell> HexCell::neighbors = std::vector<HexCell>{ // Order : W - NW - NE - E - SE - SW - CENTER
 	HexCell{0, -1}, HexCell{-1, 0}, HexCell{-1, 1},
@@ -29,7 +32,7 @@ bool operator<(const HexCell& a, const HexCell& b) {
 }
 
 int HexCell::distanceTo(const HexCell& dest) const {
-	return (std::abs(q - dest.q) + std::abs(r - dest.r) + std::abs(q + dest.q - r - dest.r)) / 2;
+	return (std::abs(q - dest.q) + std::abs(r - dest.r) + std::abs(-(r + q) + dest.r + dest.q)) / 2;
 }
 
 std::vector<HexCell> HexCell::getNeighbors() const {
@@ -60,4 +63,11 @@ HexCell HexCell::neighborFromDirection(EHexCellDirection const& direction) const
 EHexCellDirection HexCell::oppositeDirection(EHexCellDirection const& direction)
 {
 	return static_cast<EHexCellDirection>((direction + 3) % 6);
+}
+
+void HexCell::debug(Logger& log) const
+{
+	std::stringstream ss;
+	ss << "q : " << q << "\tr : " << r << std::endl;
+	log.Log(ss.str());
 }

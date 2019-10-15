@@ -8,6 +8,7 @@
 #include <algorithm>
 #include <sstream>
 
+#include "Globals.h"
 
 struct Node {
 	std::vector<Connection> connections;
@@ -40,7 +41,7 @@ public:
 	void init(const SInitData& initData);
 	void update(const STurnData& turnData);
 
-	Node* getNode(const graphKey& key) const;
+	const Node* getNode(const graphKey& key) const;
 	const std::unordered_map<graphKey, Node>& getNodes() const;
 
 	void debug(Logger& logger) const;

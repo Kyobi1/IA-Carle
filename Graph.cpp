@@ -20,15 +20,18 @@ void Graph::init(const SInitData& initData)
 	{
 		for (int i = 0; i < it->second.connections.size(); ++i)
 		{
-			if (map.contains(it->second.connections[i].destinationNode)) it->second.connections[i].object = Connection::Nothing;
+			if (map.find(it->second.connections[i].destinationNode) != map.end())
+				it->second.connections[i].setObjectType(Connection::Nothing);
 		}
 	}
 	for (int i = 0; i < initData.objectInfoArraySize; ++i)
 	{
 		HexCell cell(initData.objectInfoArray[i].q, initData.objectInfoArray[i].r);
 		HexCell neighbor(cell.neighborFromDirection(initData.objectInfoArray[i].cellPosition));
-		map[cell].connections[initData.objectInfoArray[i].cellPosition].object = static_cast<Connection::ObjectType>(initData.objectInfoArray[i].types[0]);
-		map[neighbor].connections[HexCell::oppositeDirection(initData.objectInfoArray[i].cellPosition)].object = static_cast<Connection::ObjectType>(initData.objectInfoArray[i].types[0]);
+		map[cell].connections[initData.objectInfoArray[i].cellPosition]
+			.setObjectType(static_cast<Connection::ObjectType>(initData.objectInfoArray[i].types[0]));
+		map[neighbor].connections[HexCell::oppositeDirection(initData.objectInfoArray[i].cellPosition)]
+			.setObjectType(static_cast<Connection::ObjectType>(initData.objectInfoArray[i].types[0]));
 	}
 }
 
@@ -42,6 +45,11 @@ std::vector<STileInfo> Graph::removeForbiddenTiles(STileInfo* tileInfoArray, int
 	std::vector<STileInfo> tiles;
 	std::for_each(tileInfoArray + 0, tileInfoArray + tileInfoArraySize, [&tiles](STileInfo tile) { if (tile.type != EHexCellType::Forbidden) tiles.push_back(tile); });
 	return tiles;
+}
+
+const Node* Graph::getNode(const graphKey& key) const
+{
+	return &map.at(key);
 }
 
 const std::unordered_map<Graph::graphKey, Node>& Graph::getNodes() const
