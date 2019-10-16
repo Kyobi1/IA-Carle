@@ -26,7 +26,7 @@ public:
 		return *this;
 	}
 
-	T1 smallestElement()
+	T1& smallestElement()
 	{
 		return *tree.front();
 	};
