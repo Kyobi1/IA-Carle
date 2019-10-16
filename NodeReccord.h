@@ -17,7 +17,7 @@ struct NodeRecord {
 
 	NodeRecord() = default; //TODO
 	NodeRecord(const HexCell& node) : node{ node }, from{ nullptr }, costSoFar{ 0 }, estimatedCost{ Connection::MAX_COST_VALUE }, category{ UNVISITED }{}
-	friend bool operator<(const NodeRecord& a,const NodeRecord& b) { return b.estimatedCost < a.estimatedCost; }
+	friend bool operator<(const NodeRecord& a,const NodeRecord& b) { return a.estimatedCost < b.estimatedCost; }
 	bool operator==(const NodeRecord& nodeCompare) { return node == nodeCompare.node; }
 };
 

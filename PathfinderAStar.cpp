@@ -66,8 +66,10 @@ PathfinderAStar::path PathfinderAStar::compute(const HexCell& goal)
 			if (Nodes[connex.destinationNode].category == NodeRecord::CLOSED) continue; //Attention poids plus grands que un sinon il faut remettre dans le openSet (consistent heuristique)
 			
 			d = current->costSoFar + connex.getCost();
-			
-			if (Nodes[connex.destinationNode].category == NodeRecord::OPEN && d >= Nodes[connex.destinationNode].costSoFar)
+			if (Nodes[connex.destinationNode].category != NodeRecord::OPEN) {
+				openSet += Nodes[connex.destinationNode];
+			}
+			else if (d >= Nodes[connex.destinationNode].costSoFar)
 			{
 				continue;
 			}
@@ -75,9 +77,7 @@ PathfinderAStar::path PathfinderAStar::compute(const HexCell& goal)
 			Nodes[connex.destinationNode].estimatedCost = d + heuristicEuclidian(connex.destinationNode, goal);
 			Nodes[connex.destinationNode].from = current;//&Nodes[connex.originNode];;
 			
-			if (Nodes[connex.destinationNode].category != NodeRecord::OPEN) {
-				openSet += Nodes[connex.destinationNode];
-			}
+			
 		}
 
 	}
