@@ -7,19 +7,24 @@
 #include <vector>
 #include <utility>
 
+class Graph;
+
 class PathFinder {
 protected:
 	using CellKey = HexCell;
-	using PathfindingList = PriorityHeap<NodeReccord>;
+	using PathfindingList = PriorityHeap<NodeRecord>;
 	using path = std::vector<HexCell>;
 
 	PathfindingList openSet;
+	const Graph* graph;
 	//PathfindingList closeSet;
 
 	virtual path compute(const HexCell& start) = 0;
+protected:
+	PathFinder(const Graph&);
+
 public:
-	class NoPathFound {};
-	PathFinder() = default;
+	//PathFinder() = default;
 
 	//std::vector<CellKey> getPath();
 

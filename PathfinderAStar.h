@@ -6,13 +6,14 @@
 
 class PathfinderAStar : public PathFinder
 {
-	std::unordered_map<HexCell, NodeReccord> Nodes;
+	std::unordered_map<HexCell, NodeRecord> Nodes;
 	CellKey start;
 
-	int heuristicEuclidian(const HexCell& node);
+	int heuristicEuclidian(const HexCell& node, const HexCell& goal) const;
+	path getPath(NodeRecord* record, const HexCell& goal) const;
 
 public:
-	PathfinderAStar(const Graph& graph, HexCell start);
+	PathfinderAStar(const Graph& graph, const HexCell& start);
 
 	path compute(const HexCell& goal) override;
 };
