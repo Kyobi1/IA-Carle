@@ -49,8 +49,8 @@ PathfinderAStar::path PathfinderAStar::compute(const HexCell& goal)
 	{
 		if (openSet.empty()) break;
 
-		current = &Nodes[openSet.smallestElement().node]; //TODO modifier openSet pour qu'il prenne des pointeurs
-		//current = &Nodes[current->node];
+		//current = &Nodes[openSet.smallestElement().node]; //TODO modifier openSet pour qu'il prenne des pointeurs
+		current = &openSet.smallestElement();//&Nodes[current->node];
 
 		if (current->node == goal) { return getPath(current, start); }
 		
@@ -59,7 +59,7 @@ PathfinderAStar::path PathfinderAStar::compute(const HexCell& goal)
 		auto v = graph->getNode(current->node)->connections;
 
 		NodeRecord::costValue d;
-		for (auto& connex : graph->getNode(current->node)->connections)
+		for (auto const& connex : graph->getNode(current->node)->connections)
 		{
 			if (connex.object != Connection::PressurePlate && connex.object != Connection::Nothing) continue;
 
