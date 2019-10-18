@@ -28,6 +28,8 @@ struct HexCell {
 	HexCell neighborFromDirection(EHexCellDirection const& direction) const;
 	static EHexCellDirection oppositeDirection(EHexCellDirection const& direction);
 
+	bool isOutOfBound(int nbColums, int nbRows) const;
+
 	void debug(Logger& log) const;
 
 private:

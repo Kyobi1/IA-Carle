@@ -61,7 +61,7 @@ PathfinderAStar::path PathfinderAStar::compute(const HexCell& goal)
 		NodeRecord::costValue d;
 		for (auto const& connex : graph->getNode(current->node)->connections)
 		{
-			if (connex.object != Connection::PressurePlate && connex.object != Connection::Nothing) continue;
+			if (connex.object != Connection::Nothing) continue;
 
 			if (Nodes[connex.destinationNode].category == NodeRecord::CLOSED) continue; //Attention poids plus grands que un sinon il faut remettre dans le openSet (consistent heuristique)
 			
