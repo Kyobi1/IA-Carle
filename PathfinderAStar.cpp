@@ -7,7 +7,7 @@ PathfinderAStar::PathfinderAStar(const Graph& graph, const HexCell& start) : Pat
 {
 	const std::unordered_map<Graph::graphKey, Node>& nodesGraph = graph.getNodes();
 	
-	std::for_each(begin(nodesGraph), end(nodesGraph), [this](std::pair<Graph::graphKey, Node> node) {
+	std::for_each(begin(nodesGraph), end(nodesGraph), [this](const std::pair<const Graph::graphKey, Node>& node) {
 		NodeRecord nodeRecord{ node.first };
 		Nodes.emplace(node.first, nodeRecord);
 	});

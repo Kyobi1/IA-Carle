@@ -2,6 +2,10 @@
 #include <iterator>
 #include <algorithm>
 
+#include <cassert>
+
+#include "PathfinderAStar.h"
+
 const std::string Node::typeNames[3] = { "Goal", "Forbidden", "Default" };
 
 void Graph::init(const SInitData& initData) 
@@ -35,6 +39,16 @@ const Node* Graph::getNode(const graphKey& key) const
 const std::unordered_map<Graph::graphKey, Node>& Graph::getNodes() const
 {
 	return map;
+}
+
+PathFinder::path Graph::getPath(const HexCell& from, const HexCell& to)
+{
+	assert((map.find(to) != map.end()));
+	if (!map[to].pathFinder.get()) {
+		map[to].pathFinder = std::make_unique<PathfinderAStar>(*this, to);
+	}
+	return map[to].pathFinder->compute(from);
+	
 }
 
 void Graph::initMapDefaultValues(SInitData const& initData)
@@ -81,9 +95,9 @@ void Graph::initObjectsConnections(SInitData const& initData)
 void Graph::updateUtilityScore(HexCell const& graphKey)
 {
 	auto& node = map[graphKey];
-	node.utilityScore = std::count_if(std::begin(node.connections), std::end(node.connections),
+	node.utilityScore = static_cast<float>(std::count_if(std::begin(node.connections), std::end(node.connections),
 		[](Connection const& connex) { return connex.object == Connection::Unknown; }
-	);
+	));
 }
 
 void Graph::updateUtilityScores()
@@ -98,5 +112,6 @@ void Graph::debug(Logger& logger) const
 {
 	logger.Log("Infos graphe : ");
 	logger.Log("Nombre de noeuds : " + std::to_string(map.size()) + '\n');
-	std::for_each(begin(map), end(map), [&logger](std::pair<graphKey, Node> n) { logger.Log("Node : "); n.second.debug(logger); });
+	std::for_each(begin(map), end(map), [&logger](const std::pair<const graphKey, Node>& n) { logger.Log("Node : "); n.second.debug(logger); });
 }
+
