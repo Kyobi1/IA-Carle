@@ -3,7 +3,7 @@
 
 const Connection::costValue Connection::MAX_COST_VALUE = UINT16_MAX;
 
-const std::string Connection::objectNames[6] = { "Wall", "Window", "Door", "Pressure Plate", "Nothing", "Forbidden" };
+const std::string Connection::objectNames[7] = { "Wall", "Window", "Door", "Pressure Plate", "Nothing", "Forbidden", "Unknown" };
 
 Connection::Connection(const HexCell& origin, const HexCell& destination, const ObjectType& object_) 
 	: originNode{ origin }, destinationNode{ destination }, object{ object_ } 
