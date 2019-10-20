@@ -24,7 +24,6 @@ void MyBotLogic::Configure(const SConfigData& _configData)
 {
 #ifdef BOT_LOGIC_DEBUG
 	mLogger.Init(_configData.logpath, "MyBotLogic.log");
-	Debug::log.Init(_configData.logpath, "debug.log");
 #endif
 
 	BOT_LOGIC_LOG(mLogger, "Configure", true);
@@ -38,14 +37,19 @@ void MyBotLogic::Init(const SInitData& _initData)
 	
 	Logger log;
 	log.Init("../Debug", "debug.txt");
-
+	
 	graph.init(_initData);
 	graph.debug(log);
+
+	mother.init(_initData, &graph);
 }
 
 void MyBotLogic::GetTurnOrders(const STurnData& _turnData, std::list<SOrder>& _orders)
 {
 	BOT_LOGIC_LOG(mLogger, "GetTurnOrders", true);
+
+	mother.debug(mLogger);
+	mother.nextTurn();
 
 	graph.update(_turnData);
 }
