@@ -2,6 +2,9 @@
 #include <algorithm>
 #include <iterator>
 #include "Debug.h"
+#include "Graph.h"
+
+PathfinderAStar::Reset PathfinderAStar::resetPathfinder;
 
 PathfinderAStar::PathfinderAStar(const Graph& graph, const HexCell& start) : PathFinder{ graph }, start{ start }
 {
@@ -12,6 +15,16 @@ PathfinderAStar::PathfinderAStar(const Graph& graph, const HexCell& start) : Pat
 		Nodes.emplace(node.first, nodeRecord);
 	});
 	
+}
+
+bool PathfinderAStar::operator==(const PathfinderAStar& other)
+{
+	return start == other.start;
+}
+
+void PathfinderAStar::setStart(const HexCell& start)
+{
+	this->start = start;
 }
 
 int PathfinderAStar::heuristicEuclidian(const HexCell& node, const HexCell& goal) const
@@ -32,6 +45,17 @@ auto PathfinderAStar::getPath(NodeRecord* record, const HexCell& goal) const ->p
 	return p;
 }
 
+void PathfinderAStar::reset()
+{
+	for (auto& node : Nodes) { 
+		node.second.category = NodeRecord::UNVISITED;
+		node.second.costSoFar = 0;
+		node.second.estimatedCost = Connection::MAX_COST_VALUE;
+		node.second.from = nullptr;
+	}
+}
+
+
 PathfinderAStar::path PathfinderAStar::compute(const HexCell& goal)
 {
 
@@ -47,8 +71,10 @@ PathfinderAStar::path PathfinderAStar::compute(const HexCell& goal)
 	NodeRecord* current;
 	while (Nodes[goal].category != NodeRecord::CLOSED)
 	{
-		if (openSet.empty()) break;
-
+		if (openSet.empty()) {
+			Debug::Log("no path found");
+			return path{};
+		}
 		//current = &Nodes[openSet.smallestElement().node]; //TODO modifier openSet pour qu'il prenne des pointeurs
 		current = &openSet.smallestElement();//&Nodes[current->node];
 
@@ -81,6 +107,5 @@ PathfinderAStar::path PathfinderAStar::compute(const HexCell& goal)
 		}
 
 	}
-	Debug::Log("no path found");
-	return path{};
+	return getPath(&Nodes[goal], start);
 }

@@ -19,7 +19,6 @@ protected:
 	PathfindingList openSet;
 	const Graph* graph;
 	//PathfindingList closeSet;
-
 protected:
 	PathFinder(const Graph&);
 

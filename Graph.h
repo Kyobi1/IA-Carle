@@ -5,8 +5,10 @@
 #include "TurnData.h"
 #include "InitData.h"
 #include "Logger.h"
-#include "PathFinder.h"
+//#include "PathFinder.h"
 #include "Globals.h"
+#include "PoolService.h"
+#include "PathfinderAStar.h"
 
 #include <algorithm>
 #include <sstream>
@@ -18,7 +20,10 @@ struct Node {
 	STileInfo nodeInfos;
 	float utilityScore = 0;
 	const static std::string typeNames[3];
-	std::unique_ptr<PathFinder> pathFinder = nullptr;
+
+	using PathfinderPool = PoolService<PathfinderAStar, decltype(PathfinderAStar::resetPathfinder)>;
+	using PathfinderPtr = PathfinderPool::pooled_ptr;
+	PathfinderPtr pathFinder{};
 
 	void debug(Logger& logger) const
 	{
@@ -35,10 +40,16 @@ struct Node {
 class Graph {
 public:
 	using graphKey = HexCell;
+	using orderList = std::vector<SOrder>;
 private:
+	using PathfinderPool = Node::PathfinderPool;
+
+	using PathfinderPoolPtr = std::unique_ptr<PathfinderPool>;
+	PathfinderPoolPtr pathfinders;
 	std::unordered_map<graphKey, Node> map;
 	int colCount;
 	int rowCount;
+
 public:
 	
 	Graph() = default;
@@ -56,8 +67,12 @@ public:
 	void initMapDefaultValues(SInitData const& initData);
 	void initObjectsConnections(SInitData const& initData);
 
+	void updateConnections(STurnData const& turnData);
+
 	void updateUtilityScore(HexCell const& graphKey);
 	void updateUtilityScores();
+
+	SOrder getOrder(EHexCellDirection dir, int uid);
 
 	void debug(Logger& logger) const;
 };

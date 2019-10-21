@@ -13,10 +13,11 @@ void Graph::init(const SInitData& initData)
 	colCount = initData.colCount;
 	rowCount = initData.rowCount;
 
-
 	initMapDefaultValues(initData);
 	initObjectsConnections(initData);
 	updateUtilityScores();
+
+	pathfinders = std::make_unique<PathfinderPool>(10, PathfinderAStar::resetPathfinder, *this, HexCell(0, 0));
 }
 
 void Graph::update(const STurnData& turnData)
@@ -45,7 +46,8 @@ PathFinder::path Graph::getPath(const HexCell& from, const HexCell& to)
 {
 	assert((map.find(to) != map.end()));
 	if (!map[to].pathFinder.get()) {
-		map[to].pathFinder = std::make_unique<PathfinderAStar>(*this, to);
+		map[to].pathFinder = pathfinders->request();
+		map[to].pathFinder->setStart(to);
 	}
 	return map[to].pathFinder->compute(from);
 	
@@ -91,6 +93,33 @@ void Graph::initObjectsConnections(SInitData const& initData)
 	}
 }
 
+void Graph::updateConnections(STurnData const& turnData)
+{
+	//for (std::unordered_map<graphKey, Node>::iterator it = map.begin(); it != map.end(); ++it)
+	std::for_each(turnData.tileInfoArray, turnData.tileInfoArray + turnData.tileInfoArraySize, [this](STileInfo& data)
+	{
+			HexCell cell{ data.q, data.r };
+			for (auto& connection : map[cell].connections)
+			{
+				if (connection.object == Connection::Unknown && map[connection.destinationNode].nodeInfos.type == Forbidden)
+				{
+					connection.setObjectType(Connection::Forbidden);
+				}
+			}
+	});
+
+	for (int i = 0; i < turnData.objectInfoArraySize; ++i)
+	{
+		HexCell cell(turnData.objectInfoArray[i].q, turnData.objectInfoArray[i].r);
+		HexCell neighbor(cell.neighborFromDirection(turnData.objectInfoArray[i].cellPosition));
+
+		map[cell].connections[turnData.objectInfoArray[i].cellPosition]
+			.setObjectType(static_cast<Connection::ObjectType>(turnData.objectInfoArray[i].types[0]));
+		map[neighbor].connections[HexCell::oppositeDirection(turnData.objectInfoArray[i].cellPosition)]
+			.setObjectType(static_cast<Connection::ObjectType>(turnData.objectInfoArray[i].types[0]));
+	}
+}
+
 
 void Graph::updateUtilityScore(HexCell const& graphKey)
 {
@@ -106,6 +135,16 @@ void Graph::updateUtilityScores()
 	{
 		updateUtilityScore(pair.first);
 	}
+}
+
+
+SOrder Graph::getOrder(EHexCellDirection dir, int uid)
+{
+	SOrder order;
+	order.orderType = EOrderType::Move;
+	order.direction = dir;
+	order.npcUID = uid;
+	return order;
 }
 
 void Graph::debug(Logger& logger) const
