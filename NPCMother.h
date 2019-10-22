@@ -15,6 +15,7 @@ class NPCMother
 
 	void createStateMachine();
 	void initGoals();
+	int getIndexNPCFromId(int idNPC) const;
 public:
 	NPCMother() = default;
 	NPCMother(const std::vector<NPC>& NPCs, Graph* map_);
@@ -22,6 +23,8 @@ public:
 	~NPCMother();
 	void init(const SInitData& _initData, Graph* map_);
 	void giveOrders(std::list<SOrder>& _orders);
+
+	HexCell getGoalNPC(int idNPC) const;
 
 	bool resteAssezDeTemps(int numNPC) const;
 	bool NPCSTousArrives() const;

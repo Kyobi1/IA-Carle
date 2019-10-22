@@ -228,8 +228,8 @@ void NPCMother::createStateMachine()
 void NPCMother::initGoals()
 {
 	const std::unordered_map<Graph::graphKey, Node>& mapGraph = map->getNodes();
-	std::for_each(begin(mapGraph), end(mapGraph), [this](std::pair<Graph::graphKey, Node> node) {
-		if (node.second.nodeInfos.type == EHexCellType::Goal) 
+	std::for_each(begin(mapGraph), end(mapGraph), [this](const std::pair<const Graph::graphKey, Node>& node) {
+		if (node.second.nodeInfos.type == EHexCellType::Goal)
 			goalsDiscovered.push_back(node.first);
 	});
 }
@@ -237,6 +237,11 @@ void NPCMother::initGoals()
 void NPCMother::giveOrders(std::list<SOrder>& _orders)
 {
 	std::for_each(begin(ordersChilds), end(ordersChilds), [&_orders](SOrder order) { _orders.push_back(order); });
+}
+
+HexCell NPCMother::getGoalNPC(int idNPC) const
+{
+	return goalsDiscovered[getIndexNPCFromId(idNPC)];
 }
 
 bool NPCMother::resteAssezDeTemps(int numNPC) const
@@ -276,6 +281,11 @@ void NPCMother::nextTurn()
 		enfants[i].updateStateMachine();
 	}
 	++num;
+}
+
+int NPCMother::getIndexNPCFromId(int idNPC) const
+{
+	return std::find_if(begin(enfants), end(enfants), [idNPC](const NPC& enfant)->bool { return enfant.getId() == idNPC; }) - enfants.begin();
 }
 
 void NPCMother::debug(Logger& logger) const
