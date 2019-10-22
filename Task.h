@@ -12,10 +12,10 @@ struct Task {
 };
 
 struct Selector : public Task {
-	std::vector<Task> childrens;
+	std::vector<Task*> childrens;
 
 	template <typename ... T>
-	Selector(T ... args) {
+	Selector(T&& ... args) {
 		childrens.push_back(args...);
 	}
 
@@ -23,10 +23,10 @@ struct Selector : public Task {
 };
 
 struct Sequence : public Task {
-	std::vector<Task> childrens;
+	std::vector<Task*> childrens;
 
 	template <typename ... T>
-	Sequence(T ... args) {
+	Sequence(T&& ... args) {
 		childrens.push_back(args...);
 	}
 
@@ -34,11 +34,11 @@ struct Sequence : public Task {
 };
 
 struct Decorator : public Task {
-	Task child;
+	Task* child;
 };
 
 struct UntilFail : public Decorator {
-	UntilFail(Task child_) {
+	UntilFail(Task* child_) {
 		child = child_;
 	}
 
