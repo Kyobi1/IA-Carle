@@ -61,6 +61,11 @@ NPC::stateTypes NPC::getEtat() const
 	return etat;
 }
 
+int NPC::getId() const
+{
+	return id;
+}
+
 void NPC::debug(Logger& logger) const
 {
 	std::stringstream ss;
