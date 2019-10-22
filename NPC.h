@@ -23,6 +23,7 @@ public:
 	~NPC();
 	void initStateMachine(State* startState, int numNPC);
 	void updateStateMachine();
+	stateTypes getEtat() const;
 
 	void debug(Logger& logger) const;
 };

@@ -13,6 +13,7 @@ void NPCMother::init(const SInitData& _initData, Graph* map_)
 	map = map_;
 	std::for_each(_initData.npcInfoArray + 0, _initData.npcInfoArray + _initData.nbNPCs, [this](SNPCInfo infosNPC) {
 		enfants.push_back(NPC(infosNPC.uid, HexCell(infosNPC.q, infosNPC.r), infosNPC.visionRange));
+		ordersChilds.emplace_back();
 	});
 	createStateMachine();
 }
@@ -224,6 +225,20 @@ void NPCMother::createStateMachine()
 	}
 }
 
+void NPCMother::initGoals()
+{
+	const std::unordered_map<Graph::graphKey, Node>& mapGraph = map->getNodes();
+	std::for_each(begin(mapGraph), end(mapGraph), [this](std::pair<Graph::graphKey, Node> node) {
+		if (node.second.nodeInfos.type == EHexCellType::Goal) 
+			goalsDiscovered.push_back(node.first);
+	});
+}
+
+void NPCMother::giveOrders(std::list<SOrder>& _orders)
+{
+	std::for_each(begin(ordersChilds), end(ordersChilds), [&_orders](SOrder order) { _orders.push_back(order); });
+}
+
 bool NPCMother::resteAssezDeTemps(int numNPC) const
 {
 	return tabAssezDeTemps[num];
@@ -231,7 +246,12 @@ bool NPCMother::resteAssezDeTemps(int numNPC) const
 
 bool NPCMother::NPCSTousArrives() const
 {
-	return tabNPCSTousArrives[num];
+	//std::all_of
+	std::vector<NPC>::const_iterator it = std::find_if(begin(enfants), end(enfants), [](NPC child)->bool {return child.getEtat() != NPC::ARRIVE; });
+	if (it == enfants.end())
+		return true;
+	return false;
+	//return tabNPCSTousArrives[num];
 }
 
 bool NPCMother::NPCAUneCible(int numNPC) const

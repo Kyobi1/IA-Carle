@@ -8,16 +8,20 @@ class NPCMother
 {
 	using cellType = HexCell;
 	std::vector<NPC> enfants;
+	std::vector<SOrder> ordersChilds;
 	Graph* map;
 	std::vector<State*> etats;
+	std::vector<HexCell> goalsDiscovered;
 
 	void createStateMachine();
+	void initGoals();
 public:
 	NPCMother() = default;
 	NPCMother(const std::vector<NPC>& NPCs, Graph* map_);
 	NPCMother(const NPCMother&) = delete;
 	~NPCMother();
 	void init(const SInitData& _initData, Graph* map_);
+	void giveOrders(std::list<SOrder>& _orders);
 
 	bool resteAssezDeTemps(int numNPC) const;
 	bool NPCSTousArrives() const;

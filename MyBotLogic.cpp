@@ -7,6 +7,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <iomanip>
 #include "PathFinderAStar.h"
 #include "Debug.h"
 
@@ -50,6 +51,7 @@ void MyBotLogic::GetTurnOrders(const STurnData& _turnData, std::list<SOrder>& _o
 
 	mother.debug(mLogger);
 	mother.nextTurn();
+	mother.giveOrders(_orders);
 
 	graph.update(_turnData);
 }
