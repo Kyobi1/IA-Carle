@@ -5,16 +5,25 @@
 #include "TurnData.h"
 #include "InitData.h"
 #include "Logger.h"
+//#include "PathFinder.h"
+#include "Globals.h"
+#include "PoolService.h"
+#include "PathfinderAStar.h"
+
 #include <algorithm>
 #include <sstream>
+#include <memory>
 
-#include "Globals.h"
 
 struct Node {
 	std::vector<Connection> connections;
 	STileInfo nodeInfos;
-	float utilityScore;
+	float utilityScore = 0;
 	const static std::string typeNames[3];
+
+	using PathfinderPool = PoolService<PathfinderAStar, decltype(PathfinderAStar::resetPathfinder)>;
+	using PathfinderPtr = PathfinderPool::pooled_ptr;
+	PathfinderPtr pathFinder{};
 
 	void debug(Logger& logger) const
 	{
@@ -31,11 +40,15 @@ struct Node {
 class Graph {
 public:
 	using graphKey = HexCell;
+	using orderList = std::vector<SOrder>;
 private:
+	using PathfinderPool = Node::PathfinderPool;
+
+	using PathfinderPoolPtr = std::unique_ptr<PathfinderPool>;
+	PathfinderPoolPtr pathfinders;
 	std::unordered_map<graphKey, Node> map;
 	int colCount;
 	int rowCount;
-
 
 public:
 	
@@ -47,13 +60,19 @@ public:
 	const Node* getNode(const graphKey& key) const;
 	const std::unordered_map<graphKey, Node>& getNodes() const;
 
+	PathFinder::path getPath(const HexCell& from, const HexCell& to);
+
 	std::vector<STileInfo> removeForbiddenTiles(STileInfo* tileInfoArray, int tileInfoArraySize) const;
 
 	void initMapDefaultValues(SInitData const& initData);
 	void initObjectsConnections(SInitData const& initData);
 
+	void updateConnections(STurnData const& turnData);
+
 	void updateUtilityScore(HexCell const& graphKey);
 	void updateUtilityScores();
+
+	SOrder getOrder(EHexCellDirection dir, int uid);
 
 	void debug(Logger& logger) const;
 };

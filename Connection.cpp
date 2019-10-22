@@ -1,7 +1,8 @@
 #include "Connection.h"
 #include <sstream>
+#include <limits>
 
-const Connection::costValue Connection::MAX_COST_VALUE = UINT16_MAX;
+const Connection::costValue Connection::MAX_COST_VALUE = std::numeric_limits<costValue>::max();
 
 const std::string Connection::objectNames[7] = { "Wall", "Window", "Door", "Pressure Plate", "Nothing", "Forbidden", "Unknown" };
 

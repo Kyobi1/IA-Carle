@@ -50,6 +50,7 @@ SET( AIBOT_HEADERS
 	PriorityHeap.h
 	NodeReccord.h
 	Debug.h
+	PoolService.h
 	
 	#DLL Stuff
 	Interop_API.h	
