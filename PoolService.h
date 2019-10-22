@@ -10,11 +10,9 @@
 
 template <class Pooled, class Init>
 class PoolService {
-public:
-	using del = std::function<void(const Pooled*)>;
 private:
+	using del = std::function<void(const Pooled*)>;
 	using parent = std::unique_ptr<Pooled, del>;
-public:
 	struct PooledPtr : public parent { //pour que les méchants gens me sabotent pas mon code avec ptr.reset(ptr.get())
 		PooledPtr() = default;
 		PooledPtr(Pooled* p, del del) : parent{ p, del } {};
@@ -23,12 +21,14 @@ public:
 		Pooled* release() { parent::reset(nullptr); return nullptr; }
 
 	};
+public:
 	using pooled_ptr = PooledPtr;
 	class NoneAvailable {};
 private:
 	using pointer = std::unique_ptr<Pooled>;
 	using pool = std::vector<pointer>;
 	using iterator = typename pool::iterator;
+	using sizetype = int;
 	iterator beginAvailable;
 
 	Init init;
@@ -81,14 +81,14 @@ public:
 		return pooled_ptr{ p, del };
 	}
 
-	constexpr bool resize(size_t newSize)
+	template<class ... CtorArgs>
+	void increaseSize(sizetype sizeIncr, CtorArgs ... args)
 	{
-		static_assert(newSize > pool_.size());
-		for (int i = 0; i < newSize - pool_.size(); ++i)
+		if (sizeIncr < 0) throw NegativeIncreaseSize{};
+		for (sizetype i = 0; i < sizeIncr; ++i)
 		{
 			pool_.emplace_back(std::make_unique<Pooled>(args...));
 		}
-		return true;
 	}
 
 
