@@ -17,13 +17,13 @@ private:
 		PooledPtr() = default;
 		PooledPtr(Pooled* p, del del) : parent{ p, del } {};
 		void reset() { parent::reset(nullptr); }
-	private:
 		Pooled* release() { parent::reset(nullptr); return nullptr; }
 
 	};
 public:
 	using pooled_ptr = PooledPtr;
 	class NoneAvailable {};
+	class NegativeIncreaseSize {};
 private:
 	using pointer = std::unique_ptr<Pooled>;
 	using pool = std::vector<pointer>;
@@ -82,7 +82,7 @@ public:
 	}
 
 	template<class ... CtorArgs>
-	void increaseSize(sizetype sizeIncr, CtorArgs ... args)
+	void increaseSize(sizetype sizeIncr,const CtorArgs& ... args)
 	{
 		if (sizeIncr < 0) throw NegativeIncreaseSize{};
 		for (sizetype i = 0; i < sizeIncr; ++i)

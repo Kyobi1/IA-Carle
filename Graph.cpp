@@ -22,7 +22,7 @@ void Graph::init(const SInitData& initData)
 
 void Graph::update(const STurnData& turnData)
 {
-
+	updateConnections(turnData);
 }
 
 std::vector<STileInfo> Graph::removeForbiddenTiles(STileInfo* tileInfoArray, int tileInfoArraySize) const
@@ -46,7 +46,13 @@ PathFinder::path Graph::getPath(const HexCell& from, const HexCell& to)
 {
 	assert((map.find(to) != map.end()));
 	if (!map[to].pathFinder.get()) {
-		map[to].pathFinder = pathfinders->request();
+		try {
+			map[to].pathFinder = pathfinders->request();
+		} 
+		catch(PathfinderPool::NoneAvailable&) {
+			pathfinders->increaseSize(1, *this, to);
+			map[to].pathFinder = pathfinders->request();
+		}
 		map[to].pathFinder->setStart(to);
 	}
 	return map[to].pathFinder->compute(from);
@@ -95,7 +101,6 @@ void Graph::initObjectsConnections(SInitData const& initData)
 
 void Graph::updateConnections(STurnData const& turnData)
 {
-	//for (std::unordered_map<graphKey, Node>::iterator it = map.begin(); it != map.end(); ++it)
 	std::for_each(turnData.tileInfoArray, turnData.tileInfoArray + turnData.tileInfoArraySize, [this](STileInfo& data)
 	{
 			HexCell cell{ data.q, data.r };
@@ -117,7 +122,9 @@ void Graph::updateConnections(STurnData const& turnData)
 			.setObjectType(static_cast<Connection::ObjectType>(turnData.objectInfoArray[i].types[0]));
 		map[neighbor].connections[HexCell::oppositeDirection(turnData.objectInfoArray[i].cellPosition)]
 			.setObjectType(static_cast<Connection::ObjectType>(turnData.objectInfoArray[i].types[0]));
+
 	}
+	updateUtilityScores();
 }
 
 
@@ -127,6 +134,7 @@ void Graph::updateUtilityScore(HexCell const& graphKey)
 	node.utilityScore = static_cast<float>(std::count_if(std::begin(node.connections), std::end(node.connections),
 		[](Connection const& connex) { return connex.object == Connection::Unknown; }
 	));
+	if (node.utilityScore < 1) node.pathFinder.reset();
 }
 
 void Graph::updateUtilityScores()
