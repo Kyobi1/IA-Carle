@@ -24,6 +24,7 @@ public:
 	void initStateMachine(State* startState, int numNPC);
 	void updateStateMachine();
 	stateTypes getEtat() const;
+	int getId() const;
 
 	void debug(Logger& logger) const;
 };
