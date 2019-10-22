@@ -54,7 +54,11 @@ void NPC::updateStateMachine()
 			break;
 		}
 	});
-	
+}
+
+NPC::stateTypes NPC::getEtat() const
+{
+	return etat;
 }
 
 void NPC::debug(Logger& logger) const

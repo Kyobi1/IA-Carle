@@ -20,7 +20,8 @@ public:
 	{
 		std::vector<Transition> transitions = currentState->getTransitions();
 
-		std::vector<Transition>::const_iterator triggered = std::find_if(begin(transitions), end(transitions), [this](const Transition& t) -> bool { return t.isTriggered(numNPC); });
+		std::vector<Transition>::const_iterator triggered =
+			std::find_if(begin(transitions), end(transitions), [this](const Transition& t) -> bool { return t.isTriggered(numNPC); });
 
 		if (triggered != end(transitions))
 		{
