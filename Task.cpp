@@ -2,16 +2,16 @@
 
 bool Selector::run()
 {
-	for (Task& c : childrens)
-		if (c.run())
+	for (Task* c : childrens)
+		if (c->run())
 			return true;
 	return false;
 }
 
 bool Sequence::run()
 {
-	for (Task& c : childrens)
-		if (!c.run())
+	for (Task* c : childrens)
+		if (!c->run())
 			return false;
 	return true;
 }
@@ -19,7 +19,7 @@ bool Sequence::run()
 bool UntilFail::run()
 {
 	while (true)
-		if (!child.run())
+		if (!child->run())
 			break;
 	return true;
 }
