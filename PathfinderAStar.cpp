@@ -75,8 +75,7 @@ PathfinderAStar::path PathfinderAStar::compute(const HexCell& goal)
 			Debug::Log("no path found");
 			return path{};
 		}
-		//current = &Nodes[openSet.smallestElement().node]; //TODO modifier openSet pour qu'il prenne des pointeurs
-		current = &openSet.smallestElement();//&Nodes[current->node];
+		current = &openSet.smallestElement();
 
 		if (current->node == goal) { return getPath(current, start); }
 		
@@ -93,7 +92,9 @@ PathfinderAStar::path PathfinderAStar::compute(const HexCell& goal)
 			
 			d = current->costSoFar + connex.getCost();
 			if (Nodes[connex.destinationNode].category != NodeRecord::OPEN) {
+				Nodes[connex.destinationNode].category = NodeRecord::OPEN;
 				openSet += Nodes[connex.destinationNode];
+
 			}
 			else if (d >= Nodes[connex.destinationNode].costSoFar)
 			{
