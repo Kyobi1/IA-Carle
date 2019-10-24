@@ -121,7 +121,7 @@ bool NPC::getHasFinalGoal() const
 
 void NPC::avance(EHexCellDirection direction)
 {
-	pos = pos.neighborFromDirection(direction);
+	pos = pos.getNeighborFromDirection(direction);
 }
 
 void NPC::debug(Logger& logger) const
