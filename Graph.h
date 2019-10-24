@@ -16,9 +16,11 @@
 
 
 struct Node {
+	using scoreValue = float;
 	std::vector<Connection> connections;
 	STileInfo nodeInfos;
-	float utilityScore = 0;
+	scoreValue utilityScore = 0;
+	scoreValue heatScore;
 	const static std::string typeNames[3];
 
 	using PathfinderPool = PoolService<PathfinderAStar, decltype(PathfinderAStar::resetPathfinder)>;
@@ -32,8 +34,9 @@ struct Node {
 		ss << "type : " << typeNames[nodeInfos.type] << std::endl;
 		ss << "Nombre de voisins : " << connections.size() << std::endl;
 		ss << "Utility Score : " << utilityScore <<  std::endl;
+		ss << "Heat Score : " << heatScore <<  std::endl;
 		logger.Log(ss.str());
-		std::for_each(begin(connections), end(connections), [&logger](Connection connection) { logger.Log("Connection : "); connection.debug(logger); });
+		//std::for_each(begin(connections), end(connections), [&logger](Connection connection) { logger.Log("Connection : "); connection.debug(logger); });
 	}
 };
 
@@ -47,8 +50,16 @@ private:
 	using PathfinderPoolPtr = std::unique_ptr<PathfinderPool>;
 	PathfinderPoolPtr pathfinders;
 	std::unordered_map<graphKey, Node> map;
+	std::vector<graphKey> goals;
 	int colCount;
 	int rowCount;
+
+	std::vector<HexCell> getSortedReachableCells(const graphKey&, int radius) const;
+
+	void initDiscoveredMapDefaultValues(SInitData const& initData);
+	void initObjectsConnections(SInitData const& initData);
+	void initUndiscoveredDefaultValues(SInitData const& initData);
+	void updateConnections(STurnData const& turnData);
 
 public:
 	
@@ -64,13 +75,12 @@ public:
 
 	std::vector<STileInfo> removeForbiddenTiles(STileInfo* tileInfoArray, int tileInfoArraySize) const;
 
-	void initMapDefaultValues(SInitData const& initData);
-	void initObjectsConnections(SInitData const& initData);
-
-	void updateConnections(STurnData const& turnData);
-
 	void updateUtilityScore(HexCell const& graphKey);
 	void updateUtilityScores();
+
+	graphKey getHighestUtilityCell(const graphKey&,int radius) const;
+
+	const std::vector<HexCell>& getDiscoveredGoals();
 
 	SOrder getOrder(EHexCellDirection dir, int uid);
 
