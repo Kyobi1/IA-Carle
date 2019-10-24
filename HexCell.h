@@ -25,7 +25,7 @@ struct HexCell {
 	std::vector<HexCell> getNeighbors() const;
 
 	EHexCellDirection directionTo(HexCell const& other) const;
-	HexCell neighborFromDirection(EHexCellDirection const& direction) const;
+	HexCell getNeighborFromDirection(EHexCellDirection const& direction) const;
 	static EHexCellDirection oppositeDirection(EHexCellDirection const& direction);
 
 	bool isOutOfBound(int nbColums, int nbRows) const;

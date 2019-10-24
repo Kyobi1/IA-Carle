@@ -24,6 +24,7 @@ void MyBotLogic::Configure(const SConfigData& _configData)
 {
 #ifdef BOT_LOGIC_DEBUG
 	mLogger.Init(_configData.logpath, "MyBotLogic.log");
+	Debug::log.Init(_configData.logpath, "Debug.log");
 #endif
 
 	BOT_LOGIC_LOG(mLogger, "Configure", true);

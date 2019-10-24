@@ -55,7 +55,7 @@ EHexCellDirection HexCell::directionTo(const HexCell& other) const {
 	}
 }
 
-HexCell HexCell::neighborFromDirection(EHexCellDirection const& direction) const
+HexCell HexCell::getNeighborFromDirection(EHexCellDirection const& direction) const
 {
 	return *this + neighbors[direction];
 }
@@ -65,11 +65,12 @@ EHexCellDirection HexCell::oppositeDirection(EHexCellDirection const& direction)
 	return static_cast<EHexCellDirection>((direction + 3) % 6);
 }
 
+
 bool HexCell::isOutOfBound(int nbColums, int nbRows) const
 {
 	if (q < 0 || q >= nbRows)
 		return true;
-	int offset = q / 2 + q % 2;
+	int offset = q / 2;
 	return  r < - offset || r >= nbColums - offset;
 }
 
