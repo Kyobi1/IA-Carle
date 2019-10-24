@@ -47,7 +47,8 @@ SET( AIBOT_HEADERS
 	#Victor
 	Connection.h
 	Graph.h
-	HexCell.h	
+	HexCell.h
+	Task.h
 
 	#Judith
 	PathFinder.h
@@ -78,6 +79,7 @@ SET( AIBOT_SRC
 	Connection.cpp
 	Graph.cpp
 	HexCell.cpp
+	Task.cpp
 
 	#Judith
 	PathFinder.cpp

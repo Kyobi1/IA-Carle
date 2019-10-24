@@ -1,56 +1,76 @@
 #include "Task.h"
+#include "Logger.h"
 
-bool Selector::run()
+#include <sstream>
+
+
+
+bool Selector::run(int idNPC)
 {
 	for (Task* c : childrens)
-		if (c->run())
+		if (c->run(idNPC))
 			return true;
 	return false;
 }
 
-bool Sequence::run()
+bool Sequence::run(int idNPC)
 {
 	for (Task* c : childrens)
-		if (!c->run())
+		if (!c->run(idNPC))
 			return false;
 	return true;
 }
 
-bool UntilFail::run()
+bool UntilFail::run(int idNPC)
 {
 	while (true)
-		if (!child->run())
+		if (!child->run(idNPC))
 			break;
 	return true;
 }
 
-bool ContactMotherGoal::run()
+bool ContactMotherGoal::run(int idNPC)
 {
-	//goalTile = mother->getGoalTile(user->getId());
+	/*Logger log;
+	log.Init("../Debug", "debugRun.txt");
+	std::stringstream ss;
+	ss << user;
+	log.Log("user address : " + ss.str());*/
+	NPCMother& mother = NPCMother::getInstance();
+	NPC& npc = mother.getNPCByID(idNPC);
+	npc.setTemporaryGoalTile(mother.getGoalNPC(idNPC));
 	return true;
 }
 
-bool GoalNotReached::run()
+bool GoalNotReached::run(int idNPC)
 {
-	/*if (goalTile == user->getPos());
-		return false;*/
+	NPCMother& mother = NPCMother::getInstance();
+	NPC& npc = mother.getNPCByID(idNPC);
+	if (mother.getGoalNPC(idNPC) == npc.getPos())
+		return false;
 	return true;
 }
 
-bool GoalNotChanged::run()
+bool GoalNotChanged::run(int idNPC)
 {
-	/*if (!(mother->getGoalTile(user->getId()) == goalTile))
-		return false;*/
+	NPCMother& mother = NPCMother::getInstance();
+	NPC& npc = mother.getNPCByID(idNPC);
+	if (mother.getGoalNPC(idNPC) != npc.getTemporaryGoalTile())
+		return false;
 	return true;
 }
 
-bool ContactMotherTurnDestination::run()
-{
-	//turnDestination = mother->getTurnTile(user->getId());
-	return true;
-}
+//bool ContactMotherTurnDestination::run()
+//{
+//	//turnDestination = mother->getTurnTile(user->getId());
+//	return true;
+//}
 
-bool Act::run()
+bool Act::run(int idNPC)
 {
-	return false;
+	NPCMother& mother = NPCMother::getInstance();
+	NPC& npc = mother.getNPCByID(idNPC);
+	mother.setNextTile(idNPC);
+	mother.NPCAvance(idNPC, npc.getPos().directionTo(npc.getTurnDestination()));
+	return true;
 }

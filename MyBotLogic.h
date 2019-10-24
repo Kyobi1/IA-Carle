@@ -34,5 +34,4 @@ protected:
 	Logger mLogger;
 
 	Graph graph;
-	NPCMother mother;
 };

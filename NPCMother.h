@@ -1,9 +1,12 @@
 #pragma once
 #include "NPC.h"
 #include "Graph.h"
+#include "Logger.h"
+
 #include <vector>
 
 class State;
+class Task;
 class NPCMother
 {
 	using cellType = HexCell;
@@ -12,19 +15,41 @@ class NPCMother
 	Graph* map;
 	std::vector<State*> etats;
 	std::vector<HexCell> goalsDiscovered;
+	std::vector<PathFinder::path> pathsNPCS;
+	bool solutionFound;
+	std::vector<std::pair<int, PathFinder::path>> solution;
 
 	void createStateMachine();
 	void initGoals();
 	int getIndexNPCFromId(int idNPC) const;
-public:
+	int getIndexInSolutionNPCFromId(int idNPC) const;
+
+	Logger logger;
 	NPCMother() = default;
-	NPCMother(const std::vector<NPC>& NPCs, Graph* map_);
+public:
+	
+
 	NPCMother(const NPCMother&) = delete;
+	NPCMother& operator=(const NPCMother&) = delete;
+
+	NPCMother(const std::vector<NPC>& NPCs, Graph* map_);
 	~NPCMother();
 	void init(const SInitData& _initData, Graph* map_);
 	void giveOrders(std::list<SOrder>& _orders);
+	NPC& getNPCByID(int idNPC);
+
+	static NPCMother& getInstance()
+	{
+		static NPCMother mother;
+		return mother;
+	}
 
 	HexCell getGoalNPC(int idNPC) const;
+	HexCell getNextTile(int idNPC) const;
+	void setGoalNPC(int idNPC);
+	void setNextTile(int idNPC);
+	void takeDecisons();
+	void NPCAvance(int idNPC, EHexCellDirection direction);
 
 	bool resteAssezDeTemps(int numNPC) const;
 	bool NPCSTousArrives() const;

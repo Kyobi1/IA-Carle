@@ -36,19 +36,22 @@ void MyBotLogic::Init(const SInitData& _initData)
 {
 	BOT_LOGIC_LOG(mLogger, "Init", true);
 	
-	Logger log;
-	log.Init("../Debug", "debug.txt");
+	//Logger log;
+	//log.Init("../Debug", "debug.txt");
 	
 	graph.init(_initData);
+	//graph.debug(log);
 
-	mother.init(_initData, &graph);
+	NPCMother::getInstance().init(_initData, &graph);
 }
 
 void MyBotLogic::GetTurnOrders(const STurnData& _turnData, std::list<SOrder>& _orders)
 {
+	NPCMother& mother = NPCMother::getInstance();
 	BOT_LOGIC_LOG(mLogger, "GetTurnOrders", true);
 
 	mother.debug(mLogger);
+	//mother.takeDecisons();
 	mother.nextTurn();
 	mother.giveOrders(_orders);
 
