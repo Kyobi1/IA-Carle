@@ -25,7 +25,6 @@ std::vector<HexCell> Graph::getSortedReachableCells(const graphKey& origin, int 
 			for (int dir = EHexCellDirection::W; dir != CENTER; ++dir) {
 				auto n = cell.getNeighborFromDirection(static_cast<EHexCellDirection>(dir));
 				if (n == origin) continue;
-				auto& debug0 = map.at(cell);
 				if (map.at(cell).connections[dir].object == Connection::Nothing)
 				{
 					auto& debug = map.at(n);
@@ -105,9 +104,10 @@ void Graph::initDiscoveredMapDefaultValues(SInitData const& initData)
 		std::vector<graphKey> neighbors = cell.getNeighbors();
 		for (int j = 0; j < neighbors.size(); ++j)
 		{
-			map[cell].connections.emplace_back(cell, neighbors[j], Connection::Unknown);//setObjectType(Connection::Forbidden);
+			map[cell].connections.emplace_back(cell, neighbors[j], Connection::Forbidden);//setObjectType(Connection::Forbidden);
 		}
 		map[cell].nodeInfos = tile;
+		map[cell].state = Node::Discovered;
 
 	});
 }
@@ -187,6 +187,7 @@ void Graph::updateConnections(STurnData const& turnData)
 					updateUtilityScore(connection.destinationNode);
 				}
 			}
+			map[cell].state = Node::Discovered;
 	});
 
 	for (int i = 0; i < turnData.objectInfoArraySize; ++i)
@@ -214,13 +215,12 @@ void Graph::updateConnections(STurnData const& turnData)
 
 void Graph::updateUtilityScore(HexCell const& graphKey)
 {
-
 	auto& node = map[graphKey];
-	int nbUnknown;
-	int nbWalls;
-	int nbWindows;
+	int nbUnknown{0};
+	int nbWalls{0};
+	int nbWindows{0};
 	std::for_each(begin(node.connections), end(node.connections),
-		[&nbUnknown, &nbWalls, &nbWindows](const Connection& c)
+		[&](const Connection& c)
 		{
 			switch (c.object) {
 			case Connection::Wall:
@@ -228,12 +228,15 @@ void Graph::updateUtilityScore(HexCell const& graphKey)
 			case Connection::Unknown:
 				++nbUnknown; break;
 			case Connection::Window:
-				++nbWindows; break;
+				if(map.at(c.destinationNode).state == Node::Undiscovered)
+					++nbWindows;
+				break;
 			default: break;
 			}
 		});
+
 	node.utilityScore = nbUnknown + nbWindows * 0.8f + nbWalls * 0.2f;
-	if (node.utilityScore < 1) node.pathFinder.reset();
+	//if (node.utilityScore < 1) node.pathFinder.reset();
 }
 
 void Graph::updateUtilityScores()

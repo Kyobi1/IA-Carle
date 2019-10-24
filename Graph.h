@@ -16,11 +16,13 @@
 
 
 struct Node {
+	enum State{ Discovered, Undiscovered};
 	using scoreValue = float;
 	std::vector<Connection> connections;
 	STileInfo nodeInfos;
 	scoreValue utilityScore = 0;
 	scoreValue heatScore;
+	State state = Undiscovered;
 	const static std::string typeNames[3];
 
 	using PathfinderPool = PoolService<PathfinderAStar, decltype(PathfinderAStar::resetPathfinder)>;
