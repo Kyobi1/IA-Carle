@@ -4,63 +4,65 @@
 #include "HexCell.h"
 
 struct Task {
-	static NPCMother* mother;
-	static NPC* user;
-	HexCell goalTile;
-	HexCell turnDestination;
-	virtual bool run() {};
+
+	virtual bool run(int idNPC) = 0;
 };
 
 struct Selector : public Task {
-	std::vector<Task> childrens;
 
+	std::vector<Task*> childrens;
 	template <typename ... T>
-	Selector(T ... args) {
+	Selector(T&& ... args) {
 		childrens.push_back(args...);
 	}
 
-	bool run();
+	bool run(int idNPC);
 };
 
 struct Sequence : public Task {
-	std::vector<Task> childrens;
+	std::vector<Task*> childrens;
 
-	template <typename ... T>
-	Sequence(T ... args) {
-		childrens.push_back(args...);
+	template <typename T, typename ... Ts>
+	void addChild(T&& arg, Ts&& ... args) {
+		childrens.push_back(arg);
+		addChild(args...);
 	}
 
-	bool run();
+	void addChild() {}
+
+	template <typename ... T>
+	Sequence(T&& ... args) {
+		addChild(args...);
+	}
+
+
+	bool run(int idNPC);
 };
 
 struct Decorator : public Task {
-	Task child;
+	Task* child;
 };
 
 struct UntilFail : public Decorator {
-	UntilFail(Task child_) {
+	UntilFail(Task* child_) {
 		child = child_;
 	}
 
-	bool run();
+	bool run(int idNPC);
 };
 
 struct ContactMotherGoal : Task {
-	bool run();
+	bool run(int idNPC);
 };
 
 struct GoalNotReached : Task {
-	bool run();
+	bool run(int idNPC);
 };
 
 struct GoalNotChanged : Task {
-	bool run();
-};
-
-struct ContactMotherTurnDestination : Task {
-	bool run();
+	bool run(int idNPC);
 };
 
 struct Act : Task {
-	bool run();
+	bool run(int idNPC);
 };
