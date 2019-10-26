@@ -42,6 +42,8 @@ void MyBotLogic::Init(const SInitData& _initData)
 	graph.init(_initData);
 	//graph.debug(log);
 
+	mLogger.Log("id NPC : " + std::to_string(_initData.npcInfoArray[0].uid));
+
 	NPCMother::getInstance().init(_initData, &graph);
 }
 
@@ -51,9 +53,10 @@ void MyBotLogic::GetTurnOrders(const STurnData& _turnData, std::list<SOrder>& _o
 	BOT_LOGIC_LOG(mLogger, "GetTurnOrders", true);
 
 	mother.debug(mLogger);
-	//mother.takeDecisons();
 	mother.nextTurn();
 	mother.giveOrders(_orders);
+
+	mLogger.Log("id NPC turn : " + std::to_string(_orders.front().npcUID));
 
 	graph.update(_turnData);
 }

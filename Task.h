@@ -66,3 +66,19 @@ struct GoalNotChanged : Task {
 struct Act : Task {
 	bool run(int idNPC);
 };
+
+struct ToExp : Task {
+	bool run(int idNPC);
+};
+
+struct ToAtt : Task {
+	bool run(int idNPC);
+};
+
+struct ToCib : Task {
+	bool run(int idNPC);
+};
+
+struct ToArr : Task {
+	bool run(int idNPC);
+};

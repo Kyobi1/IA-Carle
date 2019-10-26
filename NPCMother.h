@@ -6,7 +6,7 @@
 #include <vector>
 
 class State;
-class Task;
+struct Task;
 class NPCMother
 {
 	using cellType = HexCell;
@@ -15,9 +15,8 @@ class NPCMother
 	Graph* map;
 	std::vector<State*> etats;
 	std::vector<HexCell> goalsDiscovered;
-	std::vector<PathFinder::path> pathsNPCS;
 	bool solutionFound;
-	std::vector<std::pair<int, PathFinder::path>> solution;
+	std::vector<std::pair<int, PathFinder::path>> pathsNPC;
 
 	void createStateMachine();
 	void initGoals();
@@ -52,9 +51,9 @@ public:
 	void NPCAvance(int idNPC, EHexCellDirection direction);
 
 	bool resteAssezDeTemps(int numNPC) const;
-	bool NPCSTousArrives() const;
-	bool NPCAUneCible(int numNPC) const;
-	bool NPCCibleAtteinte(int numNPC) const;
+	bool NPCSTousArrives(); //const;
+	bool NPCAUneCible(int numNPC); //const;
+	bool NPCCibleAtteinte(int numNPC);// const;
 	bool NPCEchangeCible(int numNPC) const;
 
 	bool tabAssezDeTemps[10] = { false, true, false, true, true, false, false, false, false, false };

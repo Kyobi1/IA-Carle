@@ -38,7 +38,7 @@ bool ContactMotherGoal::run(int idNPC)
 	log.Log("user address : " + ss.str());*/
 	NPCMother& mother = NPCMother::getInstance();
 	NPC& npc = mother.getNPCByID(idNPC);
-	npc.setTemporaryGoalTile(mother.getGoalNPC(idNPC));
+	npc.giveGoal(mother.getGoalNPC(idNPC));
 	return true;
 }
 
@@ -72,5 +72,37 @@ bool Act::run(int idNPC)
 	NPC& npc = mother.getNPCByID(idNPC);
 	mother.setNextTile(idNPC);
 	mother.NPCAvance(idNPC, npc.getPos().directionTo(npc.getTurnDestination()));
+	return true;
+}
+
+bool ToExp::run(int idNPC)
+{
+	NPCMother& mother = NPCMother::getInstance();
+	NPC& npc = mother.getNPCByID(idNPC);
+	npc.setEtat(NPC::EXPLORATION);
+	return true;
+}
+
+bool ToAtt::run(int idNPC)
+{
+	NPCMother& mother = NPCMother::getInstance();
+	NPC& npc = mother.getNPCByID(idNPC);
+	npc.setEtat(NPC::EN_ATTENTE);
+	return true;
+}
+
+bool ToCib::run(int idNPC)
+{
+	NPCMother& mother = NPCMother::getInstance();
+	NPC& npc = mother.getNPCByID(idNPC);
+	npc.setEtat(NPC::DEPLACEMENT_CIBLE);
+	return true;
+}
+
+bool ToArr::run(int idNPC)
+{
+	NPCMother& mother = NPCMother::getInstance();
+	NPC& npc = mother.getNPCByID(idNPC);
+	npc.setEtat(NPC::ARRIVE);
 	return true;
 }
