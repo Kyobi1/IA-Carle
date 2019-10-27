@@ -1,5 +1,6 @@
 #pragma once
 #include "State.h"
+
 #include <algorithm>
 
 class StateMachine
@@ -16,7 +17,7 @@ public:
 		numNPC = numNPC_;
 	}
 
-	std::vector<Action> update()
+	std::vector<Task*> update()
 	{
 		std::vector<Transition> transitions = currentState->getTransitions();
 
@@ -27,9 +28,9 @@ public:
 		{
 			State* targetState = triggered->getTargetState();
 
-			std::vector<Action> actions = currentState->getExitActions();
-			std::vector<Action> actionsTriggered = triggered->getActions();
-			std::vector<Action> entryActions = targetState->getEntryActions();
+			std::vector<Task*> actions = currentState->getExitActions();
+			std::vector<Task*> actionsTriggered = triggered->getActions();
+			std::vector<Task*> entryActions = targetState->getEntryActions();
 			actions.insert(std::end(actions), std::begin(actionsTriggered), std::end(actionsTriggered));
 			actions.insert(std::end(actions), std::begin(entryActions), std::end(entryActions));
 
@@ -47,6 +48,8 @@ public:
 	void debug(Logger& logger) const
 	{
 		std::stringstream ss;
+		ss << "Current state : " << std::endl;
+		currentState->debug(logger);
 		ss << "Nb transition : " << currentState->getTransitions().size() << std::endl;
 		logger.Log(ss.str());
 	}

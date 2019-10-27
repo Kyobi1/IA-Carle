@@ -6,27 +6,23 @@
 
 const std::string NPC::stateNames[5] = { "EXPLORATION", "DEPLACEMENT_CIBLE", "EN_ATTENTE", "ARRIVE", "NON_ASSIGNE" };
 
-NPC::NPC() : id(-1), pos(), etat(NON_ASSIGNE), hasFinalGoal(false)
+NPC::NPC() : id(-1), pos(), etat(NON_ASSIGNE), hasGoal(false)
 {
 	stateMachine = new StateMachine();
-	taskMove = new Sequence(new ContactMotherGoal(), new Sequence(new GoalNotReached(), new GoalNotChanged(), new Act()));
 }
 
-NPC::NPC(int id_, cellType startPos, int visionRange_, stateTypes etat_) : id(id_), pos(startPos), visionRange(visionRange_), etat(etat_), hasFinalGoal(false)
+NPC::NPC(int id_, cellType startPos, int visionRange_, stateTypes etat_) : id(id_), pos(startPos), visionRange(visionRange_), etat(etat_), hasGoal(false)
 {
 	stateMachine = new StateMachine();
-	taskMove = new Sequence(new ContactMotherGoal(), new Sequence(new GoalNotReached(), new GoalNotChanged(), new Act()));
 }
 
-NPC::NPC(const NPC& npc_) : pos{ npc_.pos }, etat{ npc_.etat }, id{ npc_.id }, visionRange{ npc_.visionRange }, hasFinalGoal{ false }
+NPC::NPC(const NPC& npc_) : pos{ npc_.pos }, etat{ npc_.etat }, id{ npc_.id }, visionRange{ npc_.visionRange }, hasGoal{ false }
 {
 	stateMachine = new StateMachine(*(npc_.stateMachine));
-	taskMove = new Sequence(new ContactMotherGoal(), new Sequence(new GoalNotReached(), new GoalNotChanged(), new Act()));
 }
 
 NPC::~NPC()
 {
-	delete taskMove;
 	delete stateMachine;
 }
 
@@ -38,34 +34,15 @@ void NPC::initStateMachine(State* startState, int numNPC)
 
 void NPC::updateStateMachine()
 {
-	std::vector<Action> actions = stateMachine->update();
-	logger.Log("actions.size() : " + std::to_string(actions.size()));
-	logger.Log("action : " + std::to_string(actions[0].etat));
-	std::for_each(begin(actions), end(actions), [this](Action action) {
-		switch (action.etat)
-		{
-		case Action::EXPLORATION:
-			this->etat = EXPLORATION;
-			taskMove->run(id);
-			break;
-		case Action::DEPLACEMENT_CIBLE:
-			this->etat = DEPLACEMENT_CIBLE;
-			taskMove->run(id);
-			break;
-		case Action::EN_ATTENTE:
-			this->etat = EN_ATTENTE;
-			break;
-		case Action::ARRIVE:
-			this->etat = ARRIVE;
-			break;
-		case Action::NON_ASSIGNE:
-			this->etat = NON_ASSIGNE;
-			break;
-		default:
-			
-			break;
-		}
+	std::vector<Task*> actions = stateMachine->update();
+	std::for_each(begin(actions), end(actions), [this](Task* action) {
+		action->run(id);
 	});
+}
+
+int NPC::getVisionRange() const
+{
+	return visionRange;
 }
 
 NPC::stateTypes NPC::getEtat() const
@@ -103,20 +80,30 @@ void NPC::setTurnDestination(const cellType& turnDestination_)
 	turnDestination = turnDestination_;
 }
 
-void NPC::giveFinalGoal(const cellType& temporaryGoalTile_)
+void NPC::setEtat(stateTypes stateType)
+{
+	etat = stateType;
+}
+
+void NPC::giveGoal(const cellType& temporaryGoalTile_)
 {
 	setTemporaryGoalTile(temporaryGoalTile_);
-	hasFinalGoal = true;
+	hasGoal = true;
 }
 
-void NPC::removeFinalGoal()
+void NPC::removeGoal()
 {
-	hasFinalGoal = false;
+	hasGoal = false;
 }
 
-bool NPC::getHasFinalGoal() const
+bool NPC::getHasGoal() const
 {
-	return hasFinalGoal;
+	return hasGoal;
+}
+
+void NPC::setHasGoal(bool hasGoal_)
+{
+	hasGoal = hasGoal_;
 }
 
 void NPC::avance(EHexCellDirection direction)

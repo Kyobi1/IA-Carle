@@ -34,6 +34,17 @@ public:
 	}
 };
 
+class ConditionNPCArrive : public Condition
+{
+public:
+	ConditionNPCArrive(NPCMother* mother_) : Condition(mother_) {}
+
+	bool test(int numNPC) const
+	{
+		return mother->NPCArrive(numNPC);
+	}
+};
+
 class ConditionNPCAUneCible : public Condition
 {
 public:

@@ -3,7 +3,7 @@
 #include "Logger.h"
 #include <string>
 
-class Task;
+struct Task;
 class StateMachine;
 class State;
 class NPCMother;
@@ -19,10 +19,9 @@ private:
 	int id;
 	int visionRange;
 	StateMachine* stateMachine;
-	Task* taskMove;
 	cellType temporaryGoalTile;
 	cellType turnDestination;
-	bool hasFinalGoal;
+	bool hasGoal;
 
 	Logger logger;
 	
@@ -42,9 +41,12 @@ public:
 	cellType getTurnDestination() const;
 	void setTemporaryGoalTile(const cellType& temporaryGoalTile_);
 	void setTurnDestination(const cellType& turnDestination_);
-	void giveFinalGoal(const cellType& temporaryGoalTile_);
-	void removeFinalGoal();
-	bool getHasFinalGoal() const;
+	void setEtat(stateTypes stateType);
+	void giveGoal(const cellType& temporaryGoalTile_);
+	void removeGoal();
+	bool getHasGoal() const;
+	void setHasGoal(bool hasGoal_);
+	int getVisionRange() const;
 
 	void debug(Logger& logger) const;
 };

@@ -6,6 +6,7 @@
 struct Task {
 
 	virtual bool run(int idNPC) = 0;
+	virtual ~Task() {}
 };
 
 struct Selector : public Task {
@@ -15,6 +16,7 @@ struct Selector : public Task {
 	Selector(T&& ... args) {
 		childrens.push_back(args...);
 	}
+	~Selector() { std::for_each(begin(childrens), end(childrens), [](Task* task) { delete task; }); }
 
 	bool run(int idNPC);
 };
@@ -34,13 +36,14 @@ struct Sequence : public Task {
 	Sequence(T&& ... args) {
 		addChild(args...);
 	}
-
+	~Sequence() { std::for_each(begin(childrens), end(childrens), [](Task* task) { delete task; }); }
 
 	bool run(int idNPC);
 };
 
 struct Decorator : public Task {
 	Task* child;
+	~Decorator() { delete child; }
 };
 
 struct UntilFail : public Decorator {
@@ -64,5 +67,25 @@ struct GoalNotChanged : Task {
 };
 
 struct Act : Task {
+	bool run(int idNPC);
+};
+
+struct NoAct : Task {
+	bool run(int idNPC);
+};
+
+struct ToExp : Task {
+	bool run(int idNPC);
+};
+
+struct ToAtt : Task {
+	bool run(int idNPC);
+};
+
+struct ToCib : Task {
+	bool run(int idNPC);
+};
+
+struct ToArr : Task {
 	bool run(int idNPC);
 };
