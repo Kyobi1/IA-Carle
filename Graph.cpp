@@ -278,6 +278,7 @@ void Graph::updateUtilityScore(HexCell const& graphKey)
 
 	node.utilityScore = nbUnknown + nbWindows * 0.8f + nbWalls * 0.2f - node.utilityMalus;
 	//if (node.utilityScore < 1) node.pathFinder.reset();
+	
 }
 
 void Graph::updateUtilityScores()
