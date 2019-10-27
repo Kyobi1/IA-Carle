@@ -21,7 +21,7 @@ void NPCMother::init(const SInitData& _initData, Graph* map_)
 		canMove.push_back(true);
 	});
 	createStateMachine();
-	initGoals();
+	nextTurn();
 }
 
 NPCMother::~NPCMother()
@@ -56,8 +56,6 @@ void NPCMother::createStateMachine()
 	// EXP
 	actions.push_back(taskMove);
 
-	// A FINIR SUR LE MEME MODELE, REGLER FUITE MEMOIRE A LA FIN
-
 	std::vector<Task*> act;
 	act.push_back(new ToAtt());
 	transitions.push_back(Transition(act, etats[NPC::EN_ATTENTE],
@@ -80,7 +78,7 @@ void NPCMother::createStateMachine()
 	transitions.push_back(Transition(act, etats[NPC::ARRIVE],
 			new ConditionNPCArrive(this)));
 
-	etats[NPC::EXPLORATION]->setEntryActions(actions);
+	//etats[NPC::EXPLORATION]->setEntryActions(actions);
 	etats[NPC::EXPLORATION]->setActions(actions);
 	etats[NPC::EXPLORATION]->setTransitions(transitions);
 
@@ -113,7 +111,7 @@ void NPCMother::createStateMachine()
 	transitions.push_back(Transition(act, etats[NPC::ARRIVE],
 			new ConditionNPCArrive(this)));
 
-	etats[NPC::DEPLACEMENT_CIBLE]->setEntryActions(actions);
+	//etats[NPC::DEPLACEMENT_CIBLE]->setEntryActions(actions);
 	etats[NPC::DEPLACEMENT_CIBLE]->setActions(actions);
 	etats[NPC::DEPLACEMENT_CIBLE]->setTransitions(transitions);
 
@@ -147,7 +145,7 @@ void NPCMother::createStateMachine()
 	transitions.push_back(Transition(act, etats[NPC::ARRIVE],
 		new ConditionNPCArrive(this)));
 
-	etats[NPC::EN_ATTENTE]->setEntryActions(actions);
+	//etats[NPC::EN_ATTENTE]->setEntryActions(actions);
 	etats[NPC::EN_ATTENTE]->setActions(actions);
 	etats[NPC::EN_ATTENTE]->setTransitions(transitions);
 
@@ -162,7 +160,7 @@ void NPCMother::createStateMachine()
 	transitions.push_back(Transition(act, etats[NPC::DEPLACEMENT_CIBLE],
 		new ConditionEchangeGoalNPC(this)));
 
-	etats[NPC::ARRIVE]->setEntryActions(actions);
+	//etats[NPC::ARRIVE]->setEntryActions(actions);
 	etats[NPC::ARRIVE]->setActions(actions);
 	etats[NPC::ARRIVE]->setTransitions(transitions);
 
@@ -203,7 +201,7 @@ void NPCMother::createStateMachine()
 	transitions.push_back(Transition(act, etats[NPC::ARRIVE],
 		new ConditionNPCArrive(this)));
 
-	etats[NPC::NON_ASSIGNE]->setEntryActions(actions);
+	//etats[NPC::NON_ASSIGNE]->setEntryActions(actions);
 	etats[NPC::NON_ASSIGNE]->setActions(actions);
 	etats[NPC::NON_ASSIGNE]->setTransitions(transitions);
 	
@@ -211,15 +209,6 @@ void NPCMother::createStateMachine()
 	{
 		enfants[indexNPC].initStateMachine(etats[NPC::NON_ASSIGNE], indexNPC);
 	}
-}
-
-void NPCMother::initGoals()
-{
-	const std::unordered_map<Graph::graphKey, Node>& mapGraph = map->getNodes();
-	std::for_each(begin(mapGraph), end(mapGraph), [this](const std::pair<const Graph::graphKey, Node>& node) {
-		if (node.second.nodeInfos.type == EHexCellType::Goal)
-			goalsDiscovered.push_back(node.first);
-	});
 }
 
 void NPCMother::takeDecisons()
@@ -291,12 +280,14 @@ void NPCMother::nextTurn()
 	{
 		std::vector<std::vector<PathFinder::path>> chemins;
 		std::vector<int> indexToID;
+		std::vector<HexCell> goalsDiscovered;
+		goalsDiscovered = map->getDiscoveredGoals();
 		// Cree toutes les combinaisons NPC/Chemins vers objectifs
-		std::for_each(begin(enfants), end(enfants), [this, &chemins, &indexToID](const NPC& npc) {
+		std::for_each(begin(enfants), end(enfants), [this, &chemins, &indexToID, &goalsDiscovered](const NPC& npc) {
 			chemins.push_back(std::vector<PathFinder::path>());
 			indexToID.push_back(npc.getId());
 			std::for_each(begin(goalsDiscovered), end(goalsDiscovered), [this, &npc, &chemins, &indexToID](HexCell goal) {
-				PathFinder::path chemin = map->getPath(goal, npc.getPos());
+				PathFinder::path chemin = map->getPath(npc.getPos(), goal);
 				if (chemin.size() > 0)
 				{
 					chemin.pop_back();
@@ -353,7 +344,9 @@ void NPCMother::nextTurn()
 			{
 				int id = enfants[i].getId();
 				HexCell tempGoal = map->getHighestUtilityCell(enfants[i].getPos(), enfants[i].getVisionRange());
-				PathFinder::path chemin = map->getPath(tempGoal, enfants[i].getPos());
+				//logger.Log("tempGoal : \tq : " + std::to_string(tempGoal.q) + ", r : " + std::to_string(tempGoal.r));
+				PathFinder::path chemin = map->getPath(enfants[i].getPos(), tempGoal);
+				//logger.Log("chemin.size() : " + std::to_string(chemin.size()));
 				chemin.pop_back();
 				repartition.emplace_back(id, chemin);
 			}
@@ -361,30 +354,30 @@ void NPCMother::nextTurn()
 		}
 		else
 		{
+			logger.Log("pos : \tq : " + std::to_string(enfants[0].getPos().q) + ", r : " + std::to_string(enfants[0].getPos().r));
+
 			for (int i = 0; i < enfants.size(); ++i)
 				enfants[i].setHasGoal(true);
 			solutionFound = true;
+			logger.Log("goal : \tq : " + std::to_string(repartition[0].second.front().q) + ", r : " + std::to_string(repartition[0].second.front().r));
 		}
 		pathsNPC = repartition;
 	}
+
+	
 
 	for (int i = 0; i < enfants.size(); ++i)
 	{
 		canMove[i] = true;
 	}
 
-	logger.Log("Salut");
-
 	solveConflicts();
-
-	logger.Log("Hey");
 
 	for (int i = 0; i < enfants.size(); ++i)
 	{
 		enfants[i].updateStateMachine();
 	}
-
-	logger.Log("Coucou");
+	logger.Log("etat : " + std::to_string(enfants[0].getEtat()));
 }
 
 void NPCMother::solveConflicts()
