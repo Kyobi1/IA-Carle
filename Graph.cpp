@@ -134,13 +134,22 @@ void Graph::initObjectsConnections(SInitData const& initData)
 	{
 		HexCell cell(initData.objectInfoArray[i].q, initData.objectInfoArray[i].r);
 		HexCell neighbor(cell.getNeighborFromDirection(initData.objectInfoArray[i].cellPosition));
-		Debug::Log(initData.objectInfoArray[i].types[0]);
-		if(!cell.isOutOfBound(colCount, rowCount))
+		//Debug::Log(initData.objectInfoArray[i].types[0]);
+		auto index = initData.objectInfoArray[i].typesSize - 1;
+		if (!cell.isOutOfBound(colCount, rowCount))
+		{
+			auto test1 = initData.objectInfoArray[i].types[index];
+
 			map[cell].connections[initData.objectInfoArray[i].cellPosition]
 				.setObjectType(static_cast<Connection::ObjectType>(initData.objectInfoArray[i].types[0]));
+		}
 		if (!neighbor.isOutOfBound(colCount, rowCount))
+		{
+			auto test2 = initData.objectInfoArray[i].types[index];
 			map[neighbor].connections[HexCell::oppositeDirection(initData.objectInfoArray[i].cellPosition)]
 				.setObjectType(static_cast<Connection::ObjectType>(initData.objectInfoArray[i].types[0]));
+		}
+			
 	}
 }
 
@@ -157,11 +166,12 @@ void Graph::initUndiscoveredDefaultValues(SInitData const& initData)
 			std::vector<graphKey> neighbors = cell.getNeighbors();
 			for (int j = 0; j < neighbors.size(); ++j)
 			{
-				map[cell].connections.emplace_back(cell, neighbors[j], Connection::Unknown);
+				auto connectionobject = neighbors[j].isOutOfBound(colCount, rowCount) ? Connection::Forbidden : Connection::Unknown;
+				map[cell].connections.emplace_back(cell, neighbors[j], connectionobject);
 				if (map.find(neighbors[j]) != end(map))
 				{
 					map[neighbors[j]].connections[HexCell::oppositeDirection(static_cast<EHexCellDirection>(j))]
-						.setObjectType(Connection::Unknown);//(neighbors[j], cell, Connection::Unknown);
+						.setObjectType(connectionobject);
 				}
 			}
 
@@ -174,42 +184,73 @@ void Graph::initUndiscoveredDefaultValues(SInitData const& initData)
 
 void Graph::updateConnections(STurnData const& turnData)
 {
-	std::for_each(turnData.tileInfoArray, turnData.tileInfoArray + turnData.tileInfoArraySize, [this](STileInfo& data)
-	{
-			HexCell cell{ data.q, data.r };
-			if (data.type == Goal) goals.push_back(cell);
-			for (auto& connection : map[cell].connections)
-			{
-				if (connection.object == Connection::Unknown && map[connection.destinationNode].nodeInfos.type == Forbidden)
-				{
-					connection.setObjectType(Connection::Forbidden);
-					updateUtilityScore(connection.originNode);
-					updateUtilityScore(connection.destinationNode);
-				}
-			}
-			map[cell].state = Node::Discovered;
-	});
-
 	for (int i = 0; i < turnData.objectInfoArraySize; ++i)
 	{
 
 		HexCell cell(turnData.objectInfoArray[i].q, turnData.objectInfoArray[i].r);
 		HexCell neighbor(cell.getNeighborFromDirection(turnData.objectInfoArray[i].cellPosition));
+		auto index = turnData.objectInfoArray[i].typesSize - 1;
 		if (!cell.isOutOfBound(colCount, rowCount))
 		{
 			map[cell].connections[turnData.objectInfoArray[i].cellPosition]
-				.setObjectType(static_cast<Connection::ObjectType>(turnData.objectInfoArray[i].types[0]));
+				.setObjectType(static_cast<Connection::ObjectType>(turnData.objectInfoArray[i].types[index]));
 			updateUtilityScore(cell);
 		}
-			
+
 		if (!neighbor.isOutOfBound(colCount, rowCount))
 		{
 			map[neighbor].connections[HexCell::oppositeDirection(turnData.objectInfoArray[i].cellPosition)]
-				.setObjectType(static_cast<Connection::ObjectType>(turnData.objectInfoArray[i].types[0]));
+				.setObjectType(static_cast<Connection::ObjectType>(turnData.objectInfoArray[i].types[index]));
 			updateUtilityScore(neighbor);
 		}
 
 	}
+	
+	std::for_each(turnData.tileInfoArray, turnData.tileInfoArray + turnData.tileInfoArraySize, [this](STileInfo& info)
+	{
+			HexCell cell{ info.q, info.r };
+			if (info.type == Goal) goals.push_back(cell);
+			auto& connections = map[cell].connections;
+			std::vector<std::pair<Connection*, EHexCellDirection>> toCheckConnections;
+			unsigned short nbUnknownConnection = 0;
+			for (int i = 0; i < connections.size(); ++i)
+			{
+				if (connections[i].object == Connection::Unknown)
+				{
+					if (map.at(connections[i].destinationNode).nodeInfos.type == Forbidden)
+					{
+						connections[i].setObjectType(Connection::Forbidden);
+						updateUtilityScore(connections[i].originNode);
+						updateUtilityScore(connections[i].destinationNode);
+					}
+					else if (map.at(connections[i].destinationNode).state == Node::Discovered) {
+						toCheckConnections.push_back({ &connections[i], static_cast<EHexCellDirection>(i) });
+					}
+					else {
+						++nbUnknownConnection;
+					}
+				}
+				
+			}
+
+			if (nbUnknownConnection < 2)
+			{
+				std::for_each(toCheckConnections.begin(), toCheckConnections.end(), [this](auto& pair) {
+					pair.first->setObjectType(Connection::Nothing);
+					if (!pair.first->destinationNode.isOutOfBound(colCount, rowCount)) 
+					{
+						map[pair.first->destinationNode].connections[HexCell::oppositeDirection(static_cast<EHexCellDirection>(pair.second))]
+							.setObjectType(Connection::Nothing);
+					}
+
+					updateUtilityScore(pair.first->originNode);
+					updateUtilityScore(pair.first->destinationNode);
+				});
+			}
+
+			map[cell].state = Node::Discovered;
+	});
+	
 }
 
 
@@ -228,15 +269,16 @@ void Graph::updateUtilityScore(HexCell const& graphKey)
 			case Connection::Unknown:
 				++nbUnknown; break;
 			case Connection::Window:
-				if(map.at(c.destinationNode).state == Node::Undiscovered)
+				if(!c.destinationNode.isOutOfBound(colCount, rowCount) && map.at(c.destinationNode).state == Node::Undiscovered)
 					++nbWindows;
 				break;
 			default: break;
 			}
 		});
 
-	node.utilityScore = nbUnknown + nbWindows * 0.8f + nbWalls * 0.2f;
+	node.utilityScore = nbUnknown + nbWindows * 0.8f + nbWalls * 0.2f - node.utilityMalus;
 	//if (node.utilityScore < 1) node.pathFinder.reset();
+	
 }
 
 void Graph::updateUtilityScores()
@@ -247,8 +289,9 @@ void Graph::updateUtilityScores()
 	}
 }
 
-auto Graph::getHighestUtilityCell(const graphKey& origin, int radius) const -> graphKey
+auto Graph::getHighestUtilityCell(const graphKey& origin, int radius) -> graphKey
 {
+	map[origin].utilityMalus += 0.5;
 	auto reachableCells = getSortedReachableCells(origin, radius);
 	return reachableCells.front();
 }

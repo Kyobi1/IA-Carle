@@ -21,7 +21,7 @@ struct Node {
 	std::vector<Connection> connections;
 	STileInfo nodeInfos;
 	scoreValue utilityScore = 0;
-	scoreValue heatScore;
+	scoreValue utilityMalus = 0;
 	State state = Undiscovered;
 	const static std::string typeNames[3];
 
@@ -36,7 +36,7 @@ struct Node {
 		ss << "type : " << typeNames[nodeInfos.type] << std::endl;
 		ss << "Nombre de voisins : " << connections.size() << std::endl;
 		ss << "Utility Score : " << utilityScore <<  std::endl;
-		ss << "Heat Score : " << heatScore <<  std::endl;
+		ss << "Heat Score : " << utilityMalus <<  std::endl;
 		logger.Log(ss.str());
 		//std::for_each(begin(connections), end(connections), [&logger](Connection connection) { logger.Log("Connection : "); connection.debug(logger); });
 	}
@@ -80,7 +80,7 @@ public:
 	void updateUtilityScore(HexCell const& graphKey);
 	void updateUtilityScores();
 
-	graphKey getHighestUtilityCell(const graphKey&,int radius) const;
+	graphKey getHighestUtilityCell(const graphKey&,int radius);
 
 	const std::vector<HexCell>& getDiscoveredGoals();
 
