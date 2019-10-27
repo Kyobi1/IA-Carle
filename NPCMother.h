@@ -14,13 +14,11 @@ class NPCMother
 	std::vector<SOrder> ordersChilds;
 	Graph* map;
 	std::vector<State*> etats;
-	std::vector<HexCell> goalsDiscovered;
 	bool solutionFound;
 	std::vector<std::pair<int, PathFinder::path>> pathsNPC;
 	std::vector<bool> canMove;
 
 	void createStateMachine();
-	void initGoals();
 	int getIndexNPCFromId(int idNPC) const;
 	int getIndexInSolutionNPCFromId(int idNPC) const;
 
