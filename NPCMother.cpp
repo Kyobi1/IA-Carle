@@ -4,7 +4,7 @@
 #include <sstream>
 #include "State.h"
 
-NPCMother::NPCMother(const std::vector<NPC>& NPCs, Graph* map_) : map(map_), enfants(NPCs), solutionFound(false)
+NPCMother::NPCMother(const std::vector<NPC>& NPCs, Graph* map_) : map(map_), enfants(NPCs), solutionFound(false), taskMove(nullptr), taskNoMove(nullptr)
 {
 	
 }
@@ -30,6 +30,8 @@ NPCMother::~NPCMother()
 	{
 		delete etats[i];
 	}
+	delete taskMove;
+	delete taskNoMove;
 }
 
 void NPCMother::createStateMachine()
@@ -45,8 +47,8 @@ void NPCMother::createStateMachine()
 	etats.push_back(ARR);
 	etats.push_back(NA);
 
-	Task* taskMove = new Sequence(new ContactMotherGoal(), new Sequence(new GoalNotReached(), new GoalNotChanged(), new Act()));
-	Task* taskNoMove = new NoAct();
+	taskMove = new Sequence(new ContactMotherGoal(), new Sequence(new GoalNotReached(), new GoalNotChanged(), new Act()));
+	taskNoMove = new NoAct();
 
 	std::vector<Task*> actions;
 	std::vector<Transition> transitions;

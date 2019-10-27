@@ -17,7 +17,9 @@ public:
 	{
 
 	}
-	~State() { std::for_each(begin(transitions), end(transitions), [](Transition t) { t.freeCondition(); }); }
+	~State() {
+		std::for_each(begin(transitions), end(transitions), [](Transition t) { t.freeCondition(); });
+	}
 	std::vector<Task*> getActions() const { return actions; }
 	std::vector<Task*> getEntryActions() const { return entryActions; }
 	std::vector<Task*> getExitActions() const { return exitActions; }

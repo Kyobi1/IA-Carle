@@ -26,6 +26,9 @@ class NPCMother
 
 	Logger logger;
 	NPCMother() = default;
+
+	Task* taskMove;
+	Task* taskNoMove;
 public:
 	
 
