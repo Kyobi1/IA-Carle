@@ -38,7 +38,7 @@ bool ContactMotherGoal::run(int idNPC)
 	log.Log("user address : " + ss.str());*/
 	NPCMother& mother = NPCMother::getInstance();
 	NPC& npc = mother.getNPCByID(idNPC);
-	npc.giveGoal(mother.getGoalNPC(idNPC));
+	npc.setTemporaryGoalTile(mother.getGoalNPC(idNPC));
 	return true;
 }
 
