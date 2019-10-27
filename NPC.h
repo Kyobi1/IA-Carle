@@ -1,9 +1,12 @@
 #pragma once
 #include "HexCell.h"
+#include "Logger.h"
 #include <string>
-//#include "StateMachine.h"
+
+struct Task;
 class StateMachine;
 class State;
+class NPCMother;
 class NPC
 {
 public:
@@ -16,6 +19,12 @@ private:
 	int id;
 	int visionRange;
 	StateMachine* stateMachine;
+	cellType temporaryGoalTile;
+	cellType turnDestination;
+	bool hasGoal;
+
+	Logger logger;
+	
 public:
 	NPC();
 	NPC(int id_, cellType startPos, int visionRange_, stateTypes etat_ = NON_ASSIGNE);
@@ -25,6 +34,19 @@ public:
 	void updateStateMachine();
 	stateTypes getEtat() const;
 	int getId() const;
+	cellType getPos() const;
+	void avance(EHexCellDirection direction);
+
+	cellType getTemporaryGoalTile() const;
+	cellType getTurnDestination() const;
+	void setTemporaryGoalTile(const cellType& temporaryGoalTile_);
+	void setTurnDestination(const cellType& turnDestination_);
+	void setEtat(stateTypes stateType);
+	void giveGoal(const cellType& temporaryGoalTile_);
+	void removeGoal();
+	bool getHasGoal() const;
+	void setHasGoal(bool hasGoal_);
+	int getVisionRange() const;
 
 	void debug(Logger& logger) const;
 };
