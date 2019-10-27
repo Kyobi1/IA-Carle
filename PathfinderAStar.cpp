@@ -42,6 +42,7 @@ auto PathfinderAStar::getPath(NodeRecord* record, const HexCell& goal) const ->p
 	} while (cur->node != start);
 	
 	p.push_back(start);
+	std::reverse(begin(p), end(p));
 	return p;
 }
 
