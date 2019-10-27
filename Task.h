@@ -67,6 +67,10 @@ struct Act : Task {
 	bool run(int idNPC);
 };
 
+struct NoAct : Task {
+	bool run(int idNPC);
+};
+
 struct ToExp : Task {
 	bool run(int idNPC);
 };

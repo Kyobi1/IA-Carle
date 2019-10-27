@@ -17,6 +17,7 @@ class NPCMother
 	std::vector<HexCell> goalsDiscovered;
 	bool solutionFound;
 	std::vector<std::pair<int, PathFinder::path>> pathsNPC;
+	std::vector<bool> canMove;
 
 	void createStateMachine();
 	void initGoals();
@@ -49,12 +50,15 @@ public:
 	void setNextTile(int idNPC);
 	void takeDecisons();
 	void NPCAvance(int idNPC, EHexCellDirection direction);
+	void NPCResteSurPlace(int idNPC);
+	void solveConflicts();
 
 	bool resteAssezDeTemps(int numNPC) const;
-	bool NPCSTousArrives(); //const;
-	bool NPCAUneCible(int numNPC); //const;
-	bool NPCCibleAtteinte(int numNPC);// const;
+	bool NPCSTousArrives()const;
+	bool NPCAUneCible(int numNPC)const;
+	bool NPCCibleAtteinte(int numNPC) const;
 	bool NPCEchangeCible(int numNPC) const;
+	bool NPCArrive(int numNPC) const;
 
 	bool tabAssezDeTemps[10] = { false, true, false, true, true, false, false, false, false, false };
 	bool tabNPCSTousArrives[10] = { true, true, false, false, true, false, true, false, false, false };

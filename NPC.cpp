@@ -40,6 +40,11 @@ void NPC::updateStateMachine()
 	});
 }
 
+int NPC::getVisionRange() const
+{
+	return visionRange;
+}
+
 NPC::stateTypes NPC::getEtat() const
 {
 	return etat;

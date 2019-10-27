@@ -71,7 +71,19 @@ bool Act::run(int idNPC)
 	NPCMother& mother = NPCMother::getInstance();
 	NPC& npc = mother.getNPCByID(idNPC);
 	mother.setNextTile(idNPC);
-	mother.NPCAvance(idNPC, npc.getPos().directionTo(npc.getTurnDestination()));
+	EHexCellDirection direction = npc.getPos().directionTo(npc.getTurnDestination());
+	if (direction == EHexCellDirection::CENTER)
+		mother.NPCResteSurPlace(idNPC);
+	else
+		mother.NPCAvance(idNPC, direction);
+	
+	return true;
+}
+
+bool NoAct::run(int idNPC)
+{
+	NPCMother& mother = NPCMother::getInstance();
+	mother.NPCResteSurPlace(idNPC);
 	return true;
 }
 

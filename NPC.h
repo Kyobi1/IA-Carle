@@ -46,6 +46,7 @@ public:
 	void removeGoal();
 	bool getHasGoal() const;
 	void setHasGoal(bool hasGoal_);
+	int getVisionRange() const;
 
 	void debug(Logger& logger) const;
 };
