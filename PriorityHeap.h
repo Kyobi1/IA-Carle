@@ -11,7 +11,9 @@ public:
 	PriorityHeap& operator+=(T1& elem)
 	{
 		tree.push_back(&elem);
-		std::push_heap(std::begin(tree), std::end(tree), [](T1* a, T1* b) { return *b < *a; });
+		std::push_heap(std::begin(tree), std::end(tree), [](T1* a, T1* b) { 
+			return *b < *a; 
+			});
 
 		return *this;
 	}

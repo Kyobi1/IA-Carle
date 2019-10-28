@@ -19,6 +19,7 @@ struct HexCell {
 	friend bool operator==(HexCell const& a, HexCell const& b);
 	friend bool operator!=(HexCell const& a, HexCell const& b);
 	friend HexCell operator+(HexCell const& a, HexCell const& b);
+	friend HexCell operator-(HexCell const& a, HexCell const& b);
 	friend bool operator<(HexCell const& a, HexCell const& b);
 
 	int distanceTo(HexCell const& dist) const;
@@ -29,6 +30,7 @@ struct HexCell {
 	static EHexCellDirection oppositeDirection(EHexCellDirection const& direction);
 
 	bool isOutOfBound(int nbColums, int nbRows) const;
+	bool isNeighbor(HexCell cell) const;
 
 	void debug(Logger& log) const;
 

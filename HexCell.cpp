@@ -26,6 +26,11 @@ HexCell operator+(const HexCell& a, const HexCell& b) {
 	return HexCell{ a.q + b.q, a.r + b.r };
 }
 
+HexCell operator-(HexCell const& a, HexCell const& b)
+{
+	return HexCell{ a.q - b.q, a.r - b.r };
+}
+
 bool operator<(const HexCell& a, const HexCell& b) {
 	if (a.q == b.q) return a.r < b.r;
 	return a.q < b.q;
@@ -72,6 +77,11 @@ bool HexCell::isOutOfBound(int nbColums, int nbRows) const
 		return true;
 	int offset = q / 2;
 	return  r < - offset || r >= nbColums - offset;
+}
+
+bool HexCell::isNeighbor(HexCell cell) const
+{
+	return std::find(begin(neighbors), end(neighbors), cell - *this) != end(neighbors);
 }
 
 void HexCell::debug(Logger& log) const

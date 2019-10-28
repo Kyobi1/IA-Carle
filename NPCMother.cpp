@@ -410,6 +410,11 @@ void NPCMother::NPCAvance(int idNPC, EHexCellDirection direction)
 	ordersChilds[indexNPC].orderType = EOrderType::Move;
 	if (!canMove[indexNPC])
 		direction = EHexCellDirection::CENTER;
+	else if (map->getNode(getNPCByID(idNPC).getPos())->connections[direction].object != Connection::Nothing)
+	{
+		direction = EHexCellDirection::CENTER;
+		map->getNode(getNPCByID(idNPC).getPos())->pathFinder->updateNodes(*map);
+	}
 	ordersChilds[indexNPC].direction = direction;
 	logger.Log("direction : " + std::to_string(ordersChilds[indexNPC].direction) + '\n');
 	enfants[indexNPC].avance(ordersChilds[indexNPC].direction);
