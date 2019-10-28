@@ -50,7 +50,7 @@ public:
 	template <class CustomInit>
 	pooled_ptr request(const CustomInit& init) {
 
-		if (beginAvailable == std::end(pool_)) throw NoneAvailable{};
+		if (beginAvailable == pool_.end()) throw NoneAvailable{};
 
 		del del = [this](const Pooled* obj) {
 			std::lock_guard<std::mutex> lock{ mutex };
@@ -85,9 +85,11 @@ public:
 	void increaseSize(sizetype sizeIncr,const CtorArgs& ... args)
 	{
 		if (sizeIncr < 0) throw NegativeIncreaseSize{};
+		auto index = beginAvailable - begin(pool_);
 		for (sizetype i = 0; i < sizeIncr; ++i)
 		{
 			pool_.emplace_back(std::make_unique<Pooled>(args...));
+			beginAvailable = begin(pool_) + index;
 		}
 	}
 

@@ -22,6 +22,8 @@ public:
 
 	void setStart(const HexCell&);
 
+	void updateNodes(const Graph& graph);
+
 	struct Reset {
 		void operator()(PathfinderAStar& pathfinder) { pathfinder.reset(); };
 	};

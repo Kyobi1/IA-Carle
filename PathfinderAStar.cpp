@@ -27,6 +27,19 @@ void PathfinderAStar::setStart(const HexCell& start)
 	this->start = start;
 }
 
+void PathfinderAStar::updateNodes(const Graph& graph)
+{
+	const std::unordered_map<Graph::graphKey, Node>& nodesGraph = graph.getNodes();
+	Nodes.clear();
+	openSet.clear();
+
+	std::for_each(begin(nodesGraph), end(nodesGraph), [this](const std::pair<const Graph::graphKey, Node>& node) {
+		NodeRecord nodeRecord{ node.first };
+		Nodes.emplace(node.first, nodeRecord);
+	});
+
+}
+
 int PathfinderAStar::heuristicEuclidian(const HexCell& node, const HexCell& goal) const
 {
 	return node.distanceTo(goal);
@@ -34,6 +47,7 @@ int PathfinderAStar::heuristicEuclidian(const HexCell& node, const HexCell& goal
 
 auto PathfinderAStar::getPath(NodeRecord* record, const HexCell& goal) const ->path
 {
+	if (record->node == goal) return { };
 	path p;
 	auto cur = record;
 	do {
@@ -59,8 +73,19 @@ void PathfinderAStar::reset()
 
 PathfinderAStar::path PathfinderAStar::compute(const HexCell& goal)
 {
+	
+	/*if (Nodes[start].category == NodeRecord::UNVISITED)
+	{
+		Nodes[start].category = NodeRecord::OPEN;
+		openSet += Nodes[start];
+		Nodes[start].costSoFar = 0;
+		Nodes[start].estimatedCost = heuristicEuclidian(start, goal);
+	}
+	*/
 
-	if (Nodes[start].category == NodeRecord::UNVISITED)
+	//openSet.clear();
+	
+	if (Nodes[start].category != NodeRecord::OPEN)
 	{
 		Nodes[start].category = NodeRecord::OPEN;
 		openSet += Nodes[start];
@@ -68,7 +93,12 @@ PathfinderAStar::path PathfinderAStar::compute(const HexCell& goal)
 		Nodes[start].estimatedCost = heuristicEuclidian(start, goal);
 	}
 	
-	
+/*
+	Nodes[start].category = NodeRecord::OPEN;
+	openSet += Nodes[start];
+	Nodes[start].costSoFar = 0;
+	Nodes[start].estimatedCost = heuristicEuclidian(start, goal);
+*/
 	NodeRecord* current;
 	while (Nodes[goal].category != NodeRecord::CLOSED)
 	{
@@ -92,19 +122,21 @@ PathfinderAStar::path PathfinderAStar::compute(const HexCell& goal)
 			if (Nodes[connex.destinationNode].category == NodeRecord::CLOSED) continue; //Attention poids plus grands que un sinon il faut remettre dans le openSet (consistent heuristique)
 			
 			d = current->costSoFar + connex.getCost();
-			if (Nodes[connex.destinationNode].category != NodeRecord::OPEN) {
+			if (Nodes[connex.destinationNode].category == NodeRecord::OPEN) {
+				if (d >= Nodes[connex.destinationNode].costSoFar)
+				{
+					continue;
+				}
+			}
+			else {
 				Nodes[connex.destinationNode].category = NodeRecord::OPEN;
+
+				Nodes[connex.destinationNode].costSoFar = d;
+				Nodes[connex.destinationNode].estimatedCost = d + heuristicEuclidian(connex.destinationNode, goal);
+				Nodes[connex.destinationNode].from = current;//&Nodes[connex.originNode];;
 				openSet += Nodes[connex.destinationNode];
 
-			}
-			else if (d >= Nodes[connex.destinationNode].costSoFar)
-			{
-				continue;
-			}
-			Nodes[connex.destinationNode].costSoFar = d;
-			Nodes[connex.destinationNode].estimatedCost = d + heuristicEuclidian(connex.destinationNode, goal);
-			Nodes[connex.destinationNode].from = current;//&Nodes[connex.originNode];;
-			
+			}		
 			
 		}
 
