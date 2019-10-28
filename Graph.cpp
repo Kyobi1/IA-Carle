@@ -81,6 +81,9 @@ const std::unordered_map<Graph::graphKey, Node>& Graph::getNodes() const
 PathFinder::path Graph::getPath(const HexCell& from, const HexCell& to)
 {
 	assert((map.find(to) != map.end()));
+	if (to.q == 3, to.r == 5 && from == HexCell{3, 8}) {
+		int stop = 0;
+	}
 	if (!map[to].pathFinder.get()) {
 		try {
 			map[to].pathFinder = pathfinders->request();
