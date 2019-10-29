@@ -53,7 +53,7 @@ void Graph::init(const SInitData& initData)
 	initObjectsConnections(initData);
 	updateUtilityScores();
 
-	pathfinders = std::make_unique<PathfinderPool>(20, PathfinderAStar::resetPathfinder, *this, HexCell(0, 0));
+	pathfinders = std::make_unique<PathfinderPool>(colCount * rowCount / 4, PathfinderAStar::resetPathfinder, *this, HexCell(0, 0));
 }
 
 void Graph::update(const STurnData& turnData)
@@ -305,6 +305,10 @@ void Graph::updateUtilityScore(HexCell const& graphKey)
 	node.utilityScore = nbUnknown + nbWindows * 0.8f + nbWalls * 0.2f - node.utilityMalus;
 	if (node.nodeInfos.type == Goal) node.utilityScore += 2;
 	
+	if (node.utilityScore < 1 && node.pathFinder.get() != nullptr) {
+		node.pathFinder.reset();
+		int stop = 0;
+	}
 	
 }
 

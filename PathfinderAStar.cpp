@@ -68,6 +68,8 @@ void PathfinderAStar::reset()
 		node.second.estimatedCost = Connection::MAX_COST_VALUE;
 		node.second.from = nullptr;
 	}
+
+	openSet.clear();
 }
 
 
