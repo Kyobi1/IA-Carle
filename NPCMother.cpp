@@ -344,6 +344,11 @@ void NPCMother::nextTurn()
 				HexCell tempGoal = map->getHighestUtilityCell(enfants[i].getPos(), enfants[i].getVisionRange());
 				//logger.Log("tempGoal : \tq : " + std::to_string(tempGoal.q) + ", r : " + std::to_string(tempGoal.r));
 				PathFinder::path chemin = map->getPath(enfants[i].getPos(), tempGoal);
+				if (chemin.size() == 0 && tempGoal != enfants[i].getPos()) {
+					map->getNode(tempGoal)->pathFinder->updateNodes(*map);
+					chemin = map->getPath(enfants[i].getPos(), tempGoal);
+				}
+					
 				//logger.Log("chemin.size() : " + std::to_string(chemin.size()));
 				chemin.pop_back();
 				repartition.emplace_back(id, chemin);

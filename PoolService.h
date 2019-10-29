@@ -16,7 +16,7 @@ private:
 	struct PooledPtr : public parent { //pour que les méchants gens me sabotent pas mon code avec ptr.reset(ptr.get())
 		PooledPtr() = default;
 		PooledPtr(Pooled* p, del del) : parent{ p, del } {};
-		void reset() { parent::reset(nullptr); }
+		void reset() { parent::reset(); }
 		Pooled* release() { parent::reset(nullptr); return nullptr; }
 
 	};
