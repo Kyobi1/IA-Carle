@@ -11,7 +11,7 @@ NPCMother::NPCMother(const std::vector<NPC>& NPCs, Graph* map_) : map(map_), enf
 
 void NPCMother::init(const SInitData& _initData, Graph* map_)
 {
-	logger.Init("../Debug", "debug.txt");
+	//logger.Init("../Debug", "debug.txt");
 	solutionFound = false;
 	map = map_;
 	// Creation des enfants
@@ -256,7 +256,6 @@ bool NPCMother::NPCAUneCible(int numNPC) const
 
 bool NPCMother::NPCCibleAtteinte(int numNPC)// const
 {
-	logger.Log("TemporaryGoalTile : \tq : " + std::to_string(enfants[numNPC].getTemporaryGoalTile().q) + ", r : " + std::to_string(enfants[numNPC].getTemporaryGoalTile().r));
 	return enfants[numNPC].getPos() == enfants[numNPC].getTemporaryGoalTile();
 	//return tabNPCCibleAtteinte[num];
 }
@@ -342,14 +341,11 @@ void NPCMother::nextTurn()
 			{
 				int id = enfants[i].getId();
 				HexCell tempGoal = map->getHighestUtilityCell(enfants[i].getPos(), enfants[i].getVisionRange());
-				//logger.Log("tempGoal : \tq : " + std::to_string(tempGoal.q) + ", r : " + std::to_string(tempGoal.r));
 				PathFinder::path chemin = map->getPath(enfants[i].getPos(), tempGoal);
 				if (chemin.size() == 0 && tempGoal != enfants[i].getPos()) {
 					map->getNode(tempGoal)->pathFinder->updateNodes(*map);
 					chemin = map->getPath(enfants[i].getPos(), tempGoal);
 				}
-					
-				//logger.Log("chemin.size() : " + std::to_string(chemin.size()));
 				chemin.pop_back();
 				repartition.emplace_back(id, chemin);
 			}
@@ -357,12 +353,10 @@ void NPCMother::nextTurn()
 		}
 		else
 		{
-			logger.Log("pos : \tq : " + std::to_string(enfants[0].getPos().q) + ", r : " + std::to_string(enfants[0].getPos().r));
 
 			for (int i = 0; i < enfants.size(); ++i)
 				enfants[i].setHasGoal(true);
 			solutionFound = true;
-			logger.Log("goal : \tq : " + std::to_string(repartition[0].second.front().q) + ", r : " + std::to_string(repartition[0].second.front().r));
 		}
 		pathsNPC = repartition;
 	}
@@ -380,7 +374,6 @@ void NPCMother::nextTurn()
 	{
 		enfants[i].updateStateMachine();
 	}
-	logger.Log("etat : " + std::to_string(enfants[0].getEtat()));
 }
 
 void NPCMother::solveConflicts()
@@ -407,7 +400,6 @@ void NPCMother::solveConflicts()
 
 void NPCMother::NPCAvance(int idNPC, EHexCellDirection direction)
 {
-	logger.Log("id : " + std::to_string(idNPC));
 	int indexNPC = getIndexNPCFromId(idNPC);
 	ordersChilds[indexNPC].npcUID = idNPC;
 	ordersChilds[indexNPC].orderType = EOrderType::Move;
@@ -421,7 +413,6 @@ void NPCMother::NPCAvance(int idNPC, EHexCellDirection direction)
 		solutionFound = false;
 	}
 	ordersChilds[indexNPC].direction = direction;
-	logger.Log("direction : " + std::to_string(ordersChilds[indexNPC].direction) + '\n');
 	enfants[indexNPC].avance(ordersChilds[indexNPC].direction);
 	if (ordersChilds[indexNPC].direction != EHexCellDirection::CENTER)
 		pathsNPC[getIndexInSolutionNPCFromId(idNPC)].second.pop_back();

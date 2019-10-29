@@ -89,7 +89,7 @@ PathfinderAStar::path PathfinderAStar::compute(const HexCell& goal)
 	while (Nodes[goal].category != NodeRecord::CLOSED)
 	{
 		if (openSet.empty()) {
-			Debug::Log("no path found");
+			//Debug::Log("no path found");
 			return path{};
 		}
 		current = &openSet.smallestElement();
