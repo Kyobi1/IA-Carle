@@ -21,7 +21,7 @@ void NPCMother::init(const SInitData& _initData, Graph* map_)
 		canMove.push_back(true);
 	});
 	createStateMachine();
-	nextTurn();
+	nextTurn(0);
 }
 
 NPCMother::~NPCMother()
@@ -94,7 +94,7 @@ void NPCMother::createStateMachine()
 			new NotCondition(
 				new ConditionNPCArrive(this)))));
 	act.clear();
-	act.push_back(new ToExp());
+	act.push_back(new Sequence(new ToCib(), taskMove));
 	transitions.push_back(Transition(act, etats[NPC::EXPLORATION],
 		new AndCondition(
 			new AndCondition(
@@ -254,9 +254,8 @@ bool NPCMother::NPCAUneCible(int numNPC) const
 	//return tabNPCAUneCible[num];
 }
 
-bool NPCMother::NPCCibleAtteinte(int numNPC)// const
+bool NPCMother::NPCCibleAtteinte(int numNPC) const
 {
-	logger.Log("TemporaryGoalTile : \tq : " + std::to_string(enfants[numNPC].getTemporaryGoalTile().q) + ", r : " + std::to_string(enfants[numNPC].getTemporaryGoalTile().r));
 	return enfants[numNPC].getPos() == enfants[numNPC].getTemporaryGoalTile();
 	//return tabNPCCibleAtteinte[num];
 }
@@ -267,13 +266,14 @@ bool NPCMother::NPCEchangeCible(int numNPC) const
 	//return tabNPCEchangeCible[num];
 }
 
-bool NPCMother::NPCArrive(int numNPC)// const
+bool NPCMother::NPCArrive(int numNPC) const
 {
 	return solutionFound && NPCCibleAtteinte(numNPC);
 }
 
-void NPCMother::nextTurn()
+void NPCMother::nextTurn(int turnNb)
 {
+	logger.Log("turn nb : " + std::to_string(turnNb));
 	if (!solutionFound)
 	{
 		std::vector<std::vector<PathFinder::path>> chemins;

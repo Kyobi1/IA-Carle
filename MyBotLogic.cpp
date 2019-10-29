@@ -55,8 +55,9 @@ void MyBotLogic::GetTurnOrders(const STurnData& _turnData, std::list<SOrder>& _o
 	BOT_LOGIC_LOG(mLogger, "GetTurnOrders", true);
 
 	mother.debug(mLogger);
-	mother.nextTurn();
+	mother.nextTurn(_turnData.turnNb);
 	mother.giveOrders(_orders);
 
-	mLogger.Log("id NPC turn : " + std::to_string(_orders.front().npcUID));
+	mLogger.Log("turn : " + std::to_string(_turnData.turnNb));
+	mLogger.Log("NPC dir : " + std::to_string(_orders.front().direction));
 }
