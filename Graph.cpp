@@ -35,8 +35,8 @@ std::vector<HexCell> Graph::getSortedReachableCells(const graphKey& origin, int 
 		}
 	}
 
-	std::sort(begin(reachable), end(reachable), [this](const auto& a, const auto& b) { 
-		if (map.at(a).utilityScore == map.at(b).utilityScore) return a < b;
+	std::sort(begin(reachable), end(reachable), [this, &origin](const auto& a, const auto& b) { 
+		if (map.at(a).utilityScore == map.at(b).utilityScore) return origin.distanceTo(a) < origin.distanceTo(b);
 		return map.at(a).utilityScore > map.at(b).utilityScore;
 		});
 	reachable.erase(std::unique(begin(reachable), end(reachable)), end(reachable));
@@ -81,9 +81,6 @@ const std::unordered_map<Graph::graphKey, Node>& Graph::getNodes() const
 PathFinder::path Graph::getPath(const HexCell& from, const HexCell& to)
 {
 	assert((map.find(to) != map.end()));
-	if (to.q == 3, to.r == 5 && from == HexCell{3, 8}) {
-		int stop = 0;
-	}
 	if (!map[to].pathFinder.get()) {
 		try {
 			map[to].pathFinder = pathfinders->request();
@@ -306,7 +303,8 @@ void Graph::updateUtilityScore(HexCell const& graphKey)
 		});
 
 	node.utilityScore = nbUnknown + nbWindows * 0.8f + nbWalls * 0.2f - node.utilityMalus;
-	//if (node.utilityScore < 1) node.pathFinder.reset();
+	if (node.nodeInfos.type == Goal) node.utilityScore += 2;
+	
 	
 }
 
@@ -321,7 +319,7 @@ void Graph::updateUtilityScores()
 auto Graph::getHighestUtilityCell(const graphKey& origin, int radius) -> graphKey
 {
 	map[origin].utilityMalus += 5;
-	auto reachableCells = getSortedReachableCells(origin, radius);
+	auto reachableCells = getSortedReachableCells(origin, std::max(radius, 3));
 	return reachableCells.front();
 }
 

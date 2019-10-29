@@ -73,18 +73,7 @@ void PathfinderAStar::reset()
 
 PathfinderAStar::path PathfinderAStar::compute(const HexCell& goal)
 {
-	
-	/*if (Nodes[start].category == NodeRecord::UNVISITED)
-	{
-		Nodes[start].category = NodeRecord::OPEN;
-		openSet += Nodes[start];
-		Nodes[start].costSoFar = 0;
-		Nodes[start].estimatedCost = heuristicEuclidian(start, goal);
-	}
-	*/
 
-	//openSet.clear();
-	
 	if (Nodes[start].category != NodeRecord::OPEN)
 	{
 		Nodes[start].category = NodeRecord::OPEN;
@@ -93,12 +82,7 @@ PathfinderAStar::path PathfinderAStar::compute(const HexCell& goal)
 		Nodes[start].estimatedCost = heuristicEuclidian(start, goal);
 	}
 	
-/*
-	Nodes[start].category = NodeRecord::OPEN;
-	openSet += Nodes[start];
-	Nodes[start].costSoFar = 0;
-	Nodes[start].estimatedCost = heuristicEuclidian(start, goal);
-*/
+
 	NodeRecord* current;
 	while (Nodes[goal].category != NodeRecord::CLOSED)
 	{
@@ -112,14 +96,17 @@ PathfinderAStar::path PathfinderAStar::compute(const HexCell& goal)
 		
 		current->category = NodeRecord::CLOSED;
 		openSet -= *current;
-		auto v = graph->getNode(current->node)->connections;
 
 		NodeRecord::costValue d;
 		for (auto const& connex : graph->getNode(current->node)->connections)
 		{
-			if (connex.object != Connection::Nothing) continue;
+			
+			if (connex.object != Connection::Nothing ) continue;
 
-			if (Nodes[connex.destinationNode].category == NodeRecord::CLOSED) continue; //Attention poids plus grands que un sinon il faut remettre dans le openSet (consistent heuristique)
+			if (Nodes[connex.destinationNode].category == NodeRecord::CLOSED) { 
+
+				continue; 
+			} //Attention poids plus grands que un sinon il faut remettre dans le openSet (consistent heuristique)
 			
 			d = current->costSoFar + connex.getCost();
 			if (Nodes[connex.destinationNode].category == NodeRecord::OPEN) {
@@ -139,7 +126,10 @@ PathfinderAStar::path PathfinderAStar::compute(const HexCell& goal)
 			}		
 			
 		}
+		
+		
 
 	}
+
 	return getPath(&Nodes[goal], start);
 }

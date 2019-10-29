@@ -13,6 +13,8 @@ struct NodeRecord {
 	costValue costSoFar;
 	costValue estimatedCost;
 
+	bool unsure = false;
+
 	enum { CLOSED, OPEN, UNVISITED } category;
 
 	NodeRecord() = default; //TODO
