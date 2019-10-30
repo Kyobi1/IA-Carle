@@ -58,11 +58,8 @@ void NPCMother::createStateMachine()
 	std::vector<Task*> act;
 	act.push_back(new ToAtt());
 	transitions.push_back(Transition(act, etats[NPC::EN_ATTENTE],
-		new AndCondition(
-			new NotCondition(
-				new ConditionResteAssezDeTemps(this)),
-			new NotCondition(
-				new ConditionNPCArrive(this)))));
+		new NotCondition(
+			new ConditionResteAssezDeTemps(this))));
 	act.clear();
 	act.push_back(new Sequence(new ToCib(), taskMove));
 	transitions.push_back(Transition(act, etats[NPC::DEPLACEMENT_CIBLE],
@@ -70,9 +67,6 @@ void NPCMother::createStateMachine()
 			new ConditionNPCAUneCible(this),
 			new ConditionResteAssezDeTemps(this))));
 	act.clear();
-	act.push_back(new ToArr());
-	transitions.push_back(Transition(act, etats[NPC::ARRIVE],
-			new ConditionNPCArrive(this)));
 
 	//etats[NPC::EXPLORATION]->setEntryActions(actions);
 	etats[NPC::EXPLORATION]->setActions(actions);
@@ -87,11 +81,8 @@ void NPCMother::createStateMachine()
 	act.clear();
 	act.push_back(new ToAtt());
 	transitions.push_back(Transition(act, etats[NPC::EN_ATTENTE],
-		new AndCondition(
-			new NotCondition(
-				new ConditionResteAssezDeTemps(this)),
-			new NotCondition(
-				new ConditionNPCArrive(this)))));
+		new NotCondition(
+			new ConditionResteAssezDeTemps(this))));
 	act.clear();
 	act.push_back(new Sequence(new ToExp(), taskMove));
 	transitions.push_back(Transition(act, etats[NPC::EXPLORATION],
@@ -105,7 +96,9 @@ void NPCMother::createStateMachine()
 	act.clear();
 	act.push_back(new Sequence(new ToArr(), taskNoMove));
 	transitions.push_back(Transition(act, etats[NPC::ARRIVE],
-			new ConditionNPCArrive(this)));
+		new AndCondition(
+			new ConditionResteAssezDeTemps(this),
+			new ConditionNPCArrive(this))));
 
 	//etats[NPC::DEPLACEMENT_CIBLE]->setEntryActions(actions);
 	etats[NPC::DEPLACEMENT_CIBLE]->setActions(actions);
@@ -121,25 +114,15 @@ void NPCMother::createStateMachine()
 	act.push_back(new Sequence(new ToExp(), taskMove));
 	transitions.push_back(Transition(act, etats[NPC::EXPLORATION],
 		new AndCondition(
-			new AndCondition(
-				new NotCondition(
-					new ConditionNPCAUneCible(this)),
-				new ConditionResteAssezDeTemps(this)),
 			new NotCondition(
-				new ConditionNPCArrive(this)))));
+				new ConditionNPCAUneCible(this)),
+			new ConditionResteAssezDeTemps(this))));
 	act.clear();
 	act.push_back(new Sequence(new ToCib(), taskMove));
 	transitions.push_back(Transition(act, etats[NPC::DEPLACEMENT_CIBLE],
 		new AndCondition(
-			new AndCondition(
-				new ConditionNPCAUneCible(this),
-				new ConditionResteAssezDeTemps(this)),
-			new NotCondition(
-				new ConditionNPCArrive(this)))));
-	act.clear();
-	act.push_back(new Sequence(new ToArr(), taskNoMove));
-	transitions.push_back(Transition(act, etats[NPC::ARRIVE],
-		new ConditionNPCArrive(this)));
+			new ConditionNPCAUneCible(this),
+			new ConditionResteAssezDeTemps(this))));
 
 	//etats[NPC::EN_ATTENTE]->setEntryActions(actions);
 	etats[NPC::EN_ATTENTE]->setActions(actions);
@@ -168,11 +151,8 @@ void NPCMother::createStateMachine()
 	act.clear();
 	act.push_back(new ToAtt());
 	transitions.push_back(Transition(act, etats[NPC::EN_ATTENTE],
-		new AndCondition(
-			new NotCondition(
-				new ConditionResteAssezDeTemps(this)),
-			new NotCondition(
-				new ConditionNPCArrive(this)))));
+		new NotCondition(
+			new ConditionResteAssezDeTemps(this))));
 	act.clear();
 	act.push_back(new ToExp());
 	transitions.push_back(Transition(act, etats[NPC::EXPLORATION],
@@ -195,7 +175,9 @@ void NPCMother::createStateMachine()
 	act.clear();
 	act.push_back(new Sequence(new ToArr(), taskNoMove));
 	transitions.push_back(Transition(act, etats[NPC::ARRIVE],
-		new ConditionNPCArrive(this)));
+		new AndCondition(
+			new ConditionResteAssezDeTemps(this),
+			new ConditionNPCArrive(this))));
 
 	//etats[NPC::NON_ASSIGNE]->setEntryActions(actions);
 	etats[NPC::NON_ASSIGNE]->setActions(actions);
@@ -224,14 +206,12 @@ HexCell NPCMother::getGoalNPC(int idNPC) const
 
 HexCell NPCMother::getNextTile(int idNPC) const
 {
-	// TO DO : gestion acces concurrents
 	return pathsNPC[getIndexInSolutionNPCFromId(idNPC)].second.back();
 }
 
 bool NPCMother::resteAssezDeTemps(int numNPC) const
 {
 	return true;
-	//return tabAssezDeTemps[num];
 }
 
 bool NPCMother::NPCSTousArrives()const
@@ -244,25 +224,21 @@ bool NPCMother::NPCSTousArrives()const
 		return true;
 	}
 	return false;
-	//return tabNPCSTousArrives[num];
 }
 
 bool NPCMother::NPCAUneCible(int numNPC) const
 {
 	return enfants[numNPC].getHasGoal();
-	//return tabNPCAUneCible[num];
 }
 
 bool NPCMother::NPCCibleAtteinte(int numNPC) const
 {
 	return enfants[numNPC].getPos() == enfants[numNPC].getTemporaryGoalTile();
-	//return tabNPCCibleAtteinte[num];
 }
 
 bool NPCMother::NPCEchangeCible(int numNPC) const
 {
 	return false;
-	//return tabNPCEchangeCible[num];
 }
 
 bool NPCMother::NPCArrive(int numNPC) const
