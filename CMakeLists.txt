@@ -36,13 +36,13 @@ SET( AIBOT_HEADERS
 	TurnData.h
 
 	#Clément
-	Action.h
 	Condition.h
 	NPC.h
 	NPCMother.h
 	PathFinderAStar.h
 	State.h
 	StateMachine.h
+	Transition.h
 
 	#Victor
 	Connection.h

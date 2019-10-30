@@ -23,17 +23,6 @@ public:
 	}
 };
 
-class ConditionNPCSArrives : public Condition
-{
-public:
-	ConditionNPCSArrives(NPCMother* mother_) : Condition(mother_) {}
-
-	bool test(int numNPC) const
-	{
-		return mother->NPCSTousArrives();
-	}
-};
-
 class ConditionNPCArrive : public Condition
 {
 public:
@@ -53,17 +42,6 @@ public:
 	bool test(int numNPC) const
 	{
 		return mother->NPCAUneCible(numNPC);
-	}
-};
-
-class ConditionCibleAtteinte : public Condition
-{
-public:
-	ConditionCibleAtteinte(NPCMother* mother_) : Condition(mother_) {}
-
-	bool test(int numNPC) const
-	{
-		return mother->NPCCibleAtteinte(numNPC);
 	}
 };
 
