@@ -20,7 +20,7 @@ void NPCMother::init(const SInitData& _initData, Graph* map_)
 		canMove.push_back(true);
 	});
 	createStateMachine();
-	nextTurn(0);
+	nextTurn();
 }
 
 NPCMother::~NPCMother()
@@ -270,7 +270,7 @@ bool NPCMother::NPCArrive(int numNPC) const
 	return solutionFound && NPCCibleAtteinte(numNPC);
 }
 
-void NPCMother::nextTurn(int turnNb)
+void NPCMother::nextTurn()
 {
 	if (!solutionFound)
 	{
