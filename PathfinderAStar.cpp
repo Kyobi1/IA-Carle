@@ -28,7 +28,7 @@ void PathfinderAStar::setStart(const HexCell& start)
 }
 
 void PathfinderAStar::updateNodes(const Graph& graph)
-{
+{/*
 	const std::unordered_map<Graph::graphKey, Node>& nodesGraph = graph.getNodes();
 	Nodes.clear();
 	openSet.clear();
@@ -36,7 +36,9 @@ void PathfinderAStar::updateNodes(const Graph& graph)
 	std::for_each(begin(nodesGraph), end(nodesGraph), [this](const std::pair<const Graph::graphKey, Node>& node) {
 		NodeRecord nodeRecord{ node.first };
 		Nodes.emplace(node.first, nodeRecord);
-	});
+	});*/
+
+	reset();
 
 }
 

@@ -19,7 +19,7 @@ private:
 	int id;
 	int visionRange;
 	StateMachine* stateMachine;
-	cellType temporaryGoalTile;
+	cellType temporaryGoalTile = HexCell{-1,-1};
 	cellType turnDestination;
 	bool hasGoal;
 

@@ -67,8 +67,8 @@ void MyBotLogic::GetTurnOrders(const STurnData& _turnData, std::list<SOrder>& _o
 	NPCMother& mother = NPCMother::getInstance();
 	//BOT_LOGIC_LOG(mLogger, "GetTurnOrders", true);
 
-	mother.debug(mLogger);
-	mother.nextTurn(_turnData.turnNb);
+	//mother.debug(mLogger);
+	mother.nextTurn();
 	mother.giveOrders(_orders);
 
 	auto Tstop = high_resolution_clock::now();
