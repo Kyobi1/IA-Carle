@@ -61,7 +61,7 @@ public:
 	bool NPCEchangeCible(int numNPC) const;
 	bool NPCArrive(int numNPC) const;
 
-	void nextTurn(int turnNb);
+	void nextTurn();
 
 	void debug(Logger& logger) const;
 };
