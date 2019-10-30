@@ -11,7 +11,6 @@ NPCMother::NPCMother(const std::vector<NPC>& NPCs, Graph* map_) : map(map_), enf
 
 void NPCMother::init(const SInitData& _initData, Graph* map_)
 {
-	//logger.Init("../Debug", "debug.txt");
 	solutionFound = false;
 	map = map_;
 	// Creation des enfants
@@ -70,10 +69,10 @@ void NPCMother::createStateMachine()
 		new AndCondition(
 			new ConditionNPCAUneCible(this),
 			new ConditionResteAssezDeTemps(this))));
-	/*act.clear();
+	act.clear();
 	act.push_back(new ToArr());
 	transitions.push_back(Transition(act, etats[NPC::ARRIVE],
-			new ConditionNPCArrive(this)));*/
+			new ConditionNPCArrive(this)));
 
 	//etats[NPC::EXPLORATION]->setEntryActions(actions);
 	etats[NPC::EXPLORATION]->setActions(actions);
@@ -94,7 +93,7 @@ void NPCMother::createStateMachine()
 			new NotCondition(
 				new ConditionNPCArrive(this)))));
 	act.clear();
-	act.push_back(new Sequence(new ToCib(), taskMove));
+	act.push_back(new Sequence(new ToExp(), taskMove));
 	transitions.push_back(Transition(act, etats[NPC::EXPLORATION],
 		new AndCondition(
 			new AndCondition(
@@ -273,7 +272,6 @@ bool NPCMother::NPCArrive(int numNPC) const
 
 void NPCMother::nextTurn(int turnNb)
 {
-	logger.Log("turn nb : " + std::to_string(turnNb));
 	if (!solutionFound)
 	{
 		std::vector<std::vector<PathFinder::path>> chemins;
@@ -342,6 +340,7 @@ void NPCMother::nextTurn(int turnNb)
 			{
 				int id = enfants[i].getId();
 				HexCell tempGoal = map->getHighestUtilityCell(enfants[i].getPos(), enfants[i].getVisionRange());
+				
 				PathFinder::path chemin = map->getPath(enfants[i].getPos(), tempGoal);
 				if (chemin.size() == 0 && tempGoal != enfants[i].getPos()) {
 					map->getNode(tempGoal)->pathFinder->updateNodes(*map);
