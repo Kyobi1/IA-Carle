@@ -11,7 +11,7 @@ struct Connection {
 
 	HexCell originNode;
 	HexCell destinationNode;
-	enum ObjectType{ Wall, Window, Door, PressurePlate, Nothing, Forbidden, Unknown } object; //Refactor to connectionType et enelver pressure plate
+	enum ObjectType{ Wall, Window, Door, Nothing, Forbidden, Unknown } object; //Refactor to connectionType et enelver pressure plate
 	const static std::string objectNames[7];
 	costValue cost;
 
